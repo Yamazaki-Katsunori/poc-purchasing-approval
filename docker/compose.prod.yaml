@@ -1,0 +1,67 @@
+# docker/compose.prod.yaml
+# NOTE:
+# - Production compose file for PoC / demo
+# - Based on compose.base.yaml
+# - Optional dev services removed
+
+services:
+  # =============================================================================
+  # Backend (FastAPI)
+  # =============================================================================
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/services/backend/Dockerfile
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-app}
+      DB_USERNAME: ${DB_USERNAME:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-app}
+      AI_API_KEY: ${AI_API_KEY:-dummy_key}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+
+  # =============================================================================
+  # Frontend (Next.js)
+  # =============================================================================
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/services/frontend/Dockerfile
+    environment:
+      NEXT_PUBLIC_API_BASE: http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+
+  # =============================================================================
+  # Database (PostgreSQL)
+  # =============================================================================
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-app}
+      POSTGRES_USER: ${DB_USERNAME:-app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-app}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USERNAME:-app} -d ${DB_DATABASE:-app} -h 127.0.0.1 -p 5432",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  db-data:

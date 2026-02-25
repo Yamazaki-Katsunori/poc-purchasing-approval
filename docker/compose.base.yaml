@@ -1,4 +1,117 @@
 # docker/compose.base.yaml
 # NOTE:
-# - This file is NOT used by devcontainer directly
-# - Intended as a base reference for CI / prod compose files
+# - Base reference for CI / prod compose files
+# - Optional services (MailPit, MinIO, Redis) are commented out for PoC
+# - Not used directly by devcontainer
+
+services:
+  # =============================================================================
+  # Backend (FastAPI)
+  # =============================================================================
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/services/backend/Dockerfile
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-app}
+      DB_USERNAME: ${DB_USERNAME:-app}
+      DB_PASSWORD: ${DB_PASSWORD:-app}
+      AI_API_KEY: ${AI_API_KEY:-dummy_key}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # =============================================================================
+  # Frontend (Next.js)
+  # =============================================================================
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/services/frontend/Dockerfile
+    environment:
+      NEXT_PUBLIC_API_BASE: http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # =============================================================================
+  # Database (PostgreSQL)
+  # =============================================================================
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-app}
+      POSTGRES_USER: ${DB_USERNAME:-app}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-app}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USERNAME:-app} -d ${DB_DATABASE:-app} -h 127.0.0.1 -p 5432",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # =============================================================================
+  # Valkey (Redis) - Optional
+  # =============================================================================
+  # valkey:
+  #   image: valkey/valkey:8
+  #   volumes:
+  #     - valkey-data:/data
+  #   healthcheck:
+  #     test: ["CMD", "valkey-cli", "ping"]
+  #     interval: 5s
+  #     timeout: 3s
+  #     retries: 20
+  #   restart: unless-stopped
+  #   # If you want to access from host:
+  #   # ports:
+  #   #   - "${VALKEY_EXPOSE_PORT:-6379}:6379"
+
+  # =============================================================================
+  # MailPit - Optional
+  # =============================================================================
+  # mailpit:
+  #   image: axllent/mailpit:latest
+  #   ports:
+  #     - "${MAILPIT_UI_PORT:-8025}:8025"
+  #     - "${MAILPIT_SMTP_PORT:-1025}:1025"
+  #   restart: unless-stopped
+
+  # =============================================================================
+  # MinIO (S3 compatible) - Optional
+  # =============================================================================
+  # minio:
+  #   image: minio/minio:latest
+  #   command: server /data --console-address ":9001"
+  #   environment:
+  #     MINIO_ROOT_USER: ${S3_ACCESS_KEY:-minioadmin}
+  #     MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-minioadmin}
+  #   ports:
+  #     - "${MINIO_API_PORT:-9000}:9000"
+  #     - "${MINIO_CONSOLE_PORT:-9001}:9001"
+  #   volumes:
+  #     - minio-data:/data
+  #   healthcheck:
+  #     test:
+  #       [
+  #         "CMD-SHELL",
+  #         "curl -fsS http://127.0.0.1:9000/minio/health/ready >/dev/null || exit 1"
+  #       ]
+  #     interval: 5s
+  #     timeout: 3s
+  #     retries: 30
+  #   restart: unless-stopped
+
+volumes:
+  db-data:
+  # valkey-data:
+  # minio-data:

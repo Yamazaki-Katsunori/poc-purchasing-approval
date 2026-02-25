@@ -1,0 +1,80 @@
+erDiagram
+    USERS {
+        int id PK
+        string name
+        string email
+        int position_id FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    USER_POSITIONS {
+        int id PK
+        string name
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    ROLES {
+        int id PK
+        string name
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    PURCHASING_APPROVALS {
+        int id PK
+        int user_id FK
+        string title
+        string purchase_type
+        decimal amount
+        text reason
+        timestamp requested_at
+        timestamp approved_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    PURCHASING_APPROVAL_STATUSES {
+        int id PK
+        string name
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    PURCHASING_APPROVAL_EVENTS {
+        int id PK
+        int purchasing_approval_id FK
+        int performed_by FK
+        int status_id FK
+        text comment
+        timestamp event_at
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    PURCHASING_APPROVAL_AI_SUMMARIES {
+        int id PK
+        int event_id FK
+        text summary_text
+        string summary_type
+        timestamp generated_at
+        timestamp created_at
+    }
+
+    PURCHASING_APPROVAL_COMMENTS {
+        int id PK
+        int event_id FK
+        int commented_by FK
+        text comment_text
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    USERS ||--o{ USER_POSITIONS : "has position"
+    USERS ||--o{ ROLES : "has role"
+    USERS ||--o{ PURCHASING_APPROVALS : "creates"
+    PURCHASING_APPROVALS ||--o{ PURCHASING_APPROVAL_EVENTS : "has events"
+    PURCHASING_APPROVAL_EVENTS ||--o{ PURCHASING_APPROVAL_AI_SUMMARIES : "generates"
+    PURCHASING_APPROVAL_EVENTS ||--o{ PURCHASING_APPROVAL_COMMENTS : "has comments"
+    PURCHASING_APPROVAL_STATUSES ||--o{ PURCHASING_APPROVAL_EVENTS : "defines"
