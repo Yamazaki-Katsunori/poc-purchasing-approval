@@ -1,19 +1,16 @@
-# nvim-devcontainers-archetype
+# poc-purchasing-approval
 
-Neovim ユーザーと VS Code / Cursor / JetBrains 系ユーザーの **開発環境差異を最小化**することを目的にした、Dev Containers + Docker Compose ベースのテンプレートリポジトリです。
-
-- **ランタイム / DB / ミドルウェア**はコンテナ側に寄せる（再現性・統一性）
-- **GUI エディタ**（VS Code / Cursor / JetBrains 等）は Dev Containers で利用する
-- **Neovim ユーザー**は DevPod で Dev Container に入り、`--dotfiles` で Neovim 設定やセットアップを揃える
-
-> このテンプレートは「Dev Containers（開発環境の定義）」を共通基盤にし、  
-> エディタ差（VS Code / Neovim）を **入口の違いだけ**に抑えることを狙っています。
+AI機能を搭載し、申請要約機能を備えた購買承認PoCアプリ
 
 ---
 
-## 1. 提供する構成（例）
+## 1. 要件定義
 
-本テンプレートは、用途に応じて以下のサービスを Docker Compose で構成できます。
+下記のDocsに詳細を記載
+
+> [Requirements](/docs/requirements/requirements.md)
+
+---
 
 ### デフォルトで利用する想定
 
