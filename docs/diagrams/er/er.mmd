@@ -1,80 +1,157 @@
 erDiagram
     USERS {
+        %% ユーザーID
         int id PK
+        %% 氏名
         string name
+        %% メールアドレス
         string email
+        %% 役職ID
         int position_id FK
+        %% 作成日時
         timestamp created_at
+        %% 更新日時
         timestamp updated_at
     }
 
     USER_POSITIONS {
+        %% 役職マスタID
         int id PK
+        %% 役職名
         string name
+        %% 作成日時
         timestamp created_at
+        %% 更新日時
         timestamp updated_at
     }
 
     ROLES {
+        %% ロールID
         int id PK
+        %% ロール名
         string name
+        %% 作成日時
         timestamp created_at
+        %% 更新日時
         timestamp updated_at
     }
 
-    PURCHASING_APPROVALS {
-        int id PK
+    USER_ROLES {
+        %% ユーザーID
         int user_id FK
-        string title
-        string purchase_type
-        decimal amount
-        text reason
-        timestamp requested_at
-        timestamp approved_at
+        %% ロールID
+        int role_id FK
+        %% 付与日時
         timestamp created_at
+    }
+
+    PURCHASING_APPROVALS {
+        %% 購買申請ID
+        int id PK
+        %% 申請者ユーザーID
+        int user_id FK
+        %% 件名
+        string title
+        %% 購買種別（例: goods/service/subscription）
+        string purchase_type
+        %% 金額
+        decimal amount
+        %% 申請理由
+        text reason
+
+        %% 現在ステータスID（スナップショット）
+        int current_status_id FK
+        %% 現在イベントID（最新イベント参照・最適化用）
+        int current_event_id FK
+
+        %% 申請日時（初回submitイベント時刻のスナップショット）
+        timestamp requested_at
+        %% 承認日時（approveイベント時刻のスナップショット）
+        timestamp approved_at
+
+        %% 作成日時
+        timestamp created_at
+        %% 更新日時
         timestamp updated_at
     }
 
     PURCHASING_APPROVAL_STATUSES {
+        %% ステータスID
         int id PK
+        %% ステータスコード（例: DRAFT/PENDING）
+        string code
+        %% ステータス名
         string name
+        %% 作成日時
         timestamp created_at
+        %% 更新日時
         timestamp updated_at
     }
 
     PURCHASING_APPROVAL_EVENTS {
+        %% 申請イベントID
         int id PK
+        %% 購買申請ID
         int purchasing_approval_id FK
+        %% 実行者ユーザーID
         int performed_by FK
+        %% 遷移先ステータスID
         int status_id FK
+
+        %% アクション（例: submit/approve/reject/return/cancel/comment）
+        string action
+        %% イベントコメント（任意）
         text comment
+
+        %% イベント発生日時（業務時刻）
         timestamp event_at
+        %% 作成日時（記録時刻）
         timestamp created_at
+        %% 更新日時
         timestamp updated_at
     }
 
     PURCHASING_APPROVAL_AI_SUMMARIES {
+        %% AI要約ID
         int id PK
+        %% 対象イベントID
         int event_id FK
+        %% 要約本文
         text summary_text
+        %% 要約種別（例: short/decision/risk）
         string summary_type
+        %% 生成日時
         timestamp generated_at
+        %% 作成日時
         timestamp created_at
     }
 
     PURCHASING_APPROVAL_COMMENTS {
+        %% コメントID
         int id PK
+        %% 紐づくイベントID
         int event_id FK
+        %% コメント投稿者ユーザーID
         int commented_by FK
+        %% コメント本文
         text comment_text
+        %% 作成日時
         timestamp created_at
+        %% 更新日時
         timestamp updated_at
     }
 
-    USERS ||--o{ USER_POSITIONS : "has position"
-    USERS ||--o{ ROLES : "has role"
+    %% relations
+    USER_POSITIONS ||--o{ USERS : "has"
     USERS ||--o{ PURCHASING_APPROVALS : "creates"
-    PURCHASING_APPROVALS ||--o{ PURCHASING_APPROVAL_EVENTS : "has events"
-    PURCHASING_APPROVAL_EVENTS ||--o{ PURCHASING_APPROVAL_AI_SUMMARIES : "generates"
-    PURCHASING_APPROVAL_EVENTS ||--o{ PURCHASING_APPROVAL_COMMENTS : "has comments"
+
+    USERS ||--o{ USER_ROLES : "has"
+    ROLES ||--o{ USER_ROLES : "assigned"
+
+    PURCHASING_APPROVALS ||--o{ PURCHASING_APPROVAL_EVENTS : "has"
     PURCHASING_APPROVAL_STATUSES ||--o{ PURCHASING_APPROVAL_EVENTS : "defines"
+
+    PURCHASING_APPROVAL_EVENTS ||--o{ PURCHASING_APPROVAL_AI_SUMMARIES : "generates"
+    PURCHASING_APPROVAL_EVENTS ||--o{ PURCHASING_APPROVAL_COMMENTS : "has"
+
+    PURCHASING_APPROVAL_STATUSES ||--o{ PURCHASING_APPROVALS : "current"
