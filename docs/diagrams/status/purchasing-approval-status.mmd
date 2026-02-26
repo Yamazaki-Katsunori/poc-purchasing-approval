@@ -1,9 +1,9 @@
 stateDiagram-v2
     [*] --> PENDING: 申請作成/提出
 
-    PENDING --> APPROVED: 承認者: 承認
-    PENDING --> RETURNED: 承認者: 差し戻し
+    PENDING --> APPROVED: 承認者 (承認)
+    PENDING --> RETURNED: 承認者 (差し戻し)
 
-    RETURNED --> PENDING: 申請者: 修正して再提出
+    RETURNED --> PENDING: 申請者 (修正して再提出)
 
     APPROVED --> [*]
