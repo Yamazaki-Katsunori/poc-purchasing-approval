@@ -9,13 +9,53 @@ FRONTEND_ROOT="$REPO_ROOT/frontend"
 
 log() { echo "[post_create] $*" | tee -a "$LOG_FILE"; }
 
+# ----------------------------
+# NVM bootstrap
+# - post_create は非対話でPATHが素になりがちなので、明示的にNVMを読み込む
+# ----------------------------
+nvm_bootstrap() {
+  # feature(node) が nvm を /usr/local/share/nvm に置くケースが多い
+  export NVM_DIR="${NVM_DIR:-/usr/local/share/nvm}"
+
+  # nvm.sh があれば読み込む（無ければ何もしない）
+  if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    # shellcheck disable=SC1090
+    . "$NVM_DIR/nvm.sh"
+    # .nvmrc があればそれ、なければデフォルトを使用
+    nvm use --silent >/dev/null 2>&1 || true
+  fi
+}
+
 run_shell() {
   local cmd="$1"
   log "+ $cmd"
-  bash -lc "$cmd" 2>&1 | tee -a "$LOG_FILE"
+
+  # bash -lc の中で NVM をロードしてから実行する
+  bash -lc "
+    set -e
+    export NVM_DIR='${NVM_DIR:-/usr/local/share/nvm}'
+    if [[ -s \"\$NVM_DIR/nvm.sh\" ]]; then
+      # shellcheck disable=SC1090
+      . \"\$NVM_DIR/nvm.sh\"
+      nvm use --silent >/dev/null 2>&1 || true
+    fi
+    $cmd
+  " 2>&1 | tee -a "$LOG_FILE"
 }
 
-has_cmd() { command -v "$1" >/dev/null 2>&1; }
+# has_cmd も run_shell と同じ解決方法（bash -lc + NVM）に揃える
+has_cmd() {
+  local bin="$1"
+  bash -lc "
+    export NVM_DIR='${NVM_DIR:-/usr/local/share/nvm}'
+    if [[ -s \"\$NVM_DIR/nvm.sh\" ]]; then
+      # shellcheck disable=SC1090
+      . \"\$NVM_DIR/nvm.sh\"
+      nvm use --silent >/dev/null 2>&1 || true
+    fi
+    command -v $bin >/dev/null 2>&1
+  "
+}
 
 sha256() {
   # Linux: sha256sum, macOS: shasum -a 256 (念のため両対応)
@@ -26,9 +66,20 @@ sha256() {
   fi
 }
 
-log "=== start ==="
+log "=== post_create_command start ==="
 log "repo: $REPO_ROOT"
 log "log file: $LOG_FILE"
+
+# デバッグ（必要なら後で消してOK）
+log "whoami: $(whoami)"
+log "id: $(id)"
+log "shell: ${SHELL:-N/A}"
+log "pwd: $(pwd)"
+log "PATH: $PATH"
+log "command -v pnpm (current shell): $(command -v pnpm || echo 'NOT_FOUND')"
+log "command -v corepack (current shell): $(command -v corepack || echo 'NOT_FOUND')"
+log "bash -lc pnpm: $(bash -lc 'command -v pnpm || echo NOT_FOUND' || true)"
+log "bash -lc PATH: $(bash -lc 'echo $PATH' || true)"
 
 # ----------------------------
 # deps list
@@ -87,7 +138,6 @@ log "marker: $POSTCREATE_MARKER"
 mkdir -p "$MARKER_DIR"
 
 # ★古いmarker掃除（最新fingerprint以外は削除）
-# 依存が変わってfingerprintが変わったら、古いmarkerは不要になるため整理する
 find "$MARKER_DIR" -maxdepth 1 -type f -name 'devcontainer-postcreate.*.done' ! -name "$MARKER_NAME" -delete || true
 
 # 「依存追加（add）」は fingerprint が未実行のときだけ
@@ -99,16 +149,19 @@ else
   log "marker found => skip dependency add step"
 fi
 
+# marker を作って良いか？（最後に判定）
+CAN_CREATE_MARKER=1
+
 # ----------------------------
 # Backend (uv)
-# - uv add は初回のみ
-# - uv sync は毎回
 # ----------------------------
 if [[ -d "$BACKEND_ROOT" && -f "$BACKEND_ROOT/pyproject.toml" ]]; then
   pushd "$BACKEND_ROOT" >/dev/null
 
   if ! has_cmd uv; then
     log "skip backend: uv not found"
+    # backend が対象なのにuvが無いのは異常寄りなので marker作らない
+    CAN_CREATE_MARKER=0
   else
     if [[ "$NEED_ADD" -eq 1 ]]; then
       if [[ "${#UV_DEPS[@]}" -gt 0 ]]; then
@@ -119,7 +172,6 @@ if [[ -d "$BACKEND_ROOT" && -f "$BACKEND_ROOT/pyproject.toml" ]]; then
       fi
     fi
 
-    # ★同期は毎回
     run_shell "uv sync"
   fi
 
@@ -130,16 +182,18 @@ fi
 
 # ----------------------------
 # Frontend (pnpm)
-# - pnpm add は初回のみ
-# - pnpm install は毎回
-#   - lockがあれば frozen（再現性チェック）
-#   - lockが無ければ通常 install（lock生成）
 # ----------------------------
+FRONTEND_TARGET=0
 if [[ -d "$FRONTEND_ROOT" && -f "$FRONTEND_ROOT/package.json" ]]; then
+  FRONTEND_TARGET=1
   pushd "$FRONTEND_ROOT" >/dev/null
 
   if ! has_cmd pnpm; then
     log "skip frontend: pnpm not found"
+
+    # ★最小対応：frontend が対象なのに pnpm が無い場合は marker を作らない
+    # （次回以降に pnpm が入ったタイミングで NEED_ADD を再実行できるようにする）
+    CAN_CREATE_MARKER=0
   else
     if [[ "$NEED_ADD" -eq 1 ]]; then
       if [[ "${#PNPM_DEPS[@]}" -gt 0 ]]; then
@@ -150,7 +204,6 @@ if [[ -d "$FRONTEND_ROOT" && -f "$FRONTEND_ROOT/package.json" ]]; then
       fi
     fi
 
-    # ★同期は毎回
     if [[ -f "pnpm-lock.yaml" ]]; then
       run_shell "pnpm install --frozen-lockfile"
     else
@@ -163,10 +216,14 @@ else
   log "skip frontend: not found package.json at $FRONTEND_ROOT"
 fi
 
-# 初回のみ marker 作成
+# 初回のみ marker 作成（ただし作って良い状態のときだけ）
 if [[ "$NEED_ADD" -eq 1 ]]; then
-  touch "$POSTCREATE_MARKER"
-  log "marker created: $POSTCREATE_MARKER"
+  if [[ "$CAN_CREATE_MARKER" -eq 1 ]]; then
+    touch "$POSTCREATE_MARKER"
+    log "marker created: $POSTCREATE_MARKER"
+  else
+    log "marker NOT created (some required tools were missing)"
+  fi
 fi
 
-log "=== done ==="
+log "=== post_create_command done ==="

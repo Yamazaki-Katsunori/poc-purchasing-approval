@@ -1,2 +1,3 @@
 .nvimlog
 .devcontainer/.env
+.pnpm-store

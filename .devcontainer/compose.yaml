@@ -82,7 +82,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-app}
 
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql
 
     healthcheck:
       test:

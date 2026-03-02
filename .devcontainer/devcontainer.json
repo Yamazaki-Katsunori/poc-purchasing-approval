@@ -5,6 +5,7 @@
   "workspaceFolder": "/workspaces/app",
   "runArgs": ["--env-file", ".devcontainer/.env"],
   "shutdownAction": "stopCompose",
+  "remoteUser": "vscode",
   "features": {
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.14",
