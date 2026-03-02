@@ -10,7 +10,9 @@ ARG USER_GID=1000
 RUN set -e; \
   apt-get update; \
   apt-get install -y --no-install-recommends \
-  ca-certificates curl git unzip jq \
+  ca-certificates curl git unzip jq vim less \
+  build-essential pkg-config libpq-dev \
+  tzdata unzip \
   openssh-client sudo \
   ripgrep fd-find locales; \
   rm -rf /var/lib/apt/lists/*; \
