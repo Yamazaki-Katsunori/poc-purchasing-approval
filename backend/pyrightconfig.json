@@ -1,0 +1,17 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+
+  "include": ["."],
+  "exclude": [
+    ".venv",
+    ".mypy_cache",
+    ".ruff_cache",
+    "__pycache__",
+    "alembic/versions"
+  ],
+
+  "typeCheckingMode": "basic",
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": false
+}

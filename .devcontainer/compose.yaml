@@ -97,8 +97,8 @@ services:
     restart: unless-stopped
 
     # If you want to access DB from host:
-    # ports:
-    #   - "${DB_EXPOSE_PORT:-5432}:5432"
+    ports:
+      - "${DB_EXPOSE_PORT:-5432}:5432"
 
   # =============================================================================
   # Valkey (Redis) - Optional (uncomment to enable)

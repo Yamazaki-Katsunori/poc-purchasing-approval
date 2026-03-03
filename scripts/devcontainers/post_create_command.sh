@@ -85,15 +85,18 @@ log "bash -lc PATH: $(bash -lc 'echo $PATH' || true)"
 # deps list
 # ----------------------------
 UV_DEPS=(
-  "fastapi"
+  "fastapi[standard]"
   "wireup"
-  "sqlalchemy"
+  "SQLAlchemy"
   "alembic"
   "passlib[bcrypt]"
   "python-jose[cryptography]"
 )
 
 UV_DEV_DEPS=(
+  "ruff"
+  "mypy"
+  "pyright"
   "pytest"
   "pytest-asyncio"
   "httpx"
