@@ -32,7 +32,6 @@ jobs:
       - name: Install deps
         run: uv sync --dev
 
-      # formatter はCIでは "check" 推奨（差分出したくない）
       - name: Ruff format (check)
         run: uv run ruff format --check
 
@@ -46,7 +45,13 @@ jobs:
         run: uv run pyright
 
       - name: Pytest
-        run: uv run pytest -q
+        run: |
+          uv run pytest -q || code=$?
+          if [ "${code:-0}" -eq 5 ]; then
+            echo "No tests collected. Skipping."
+            exit 0
+          fi
+          exit "${code:-0}"
 
   frontend:
     name: frontend (prettier/eslint)
@@ -57,6 +62,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -64,15 +74,9 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: frontend/pnpm-lock.yaml
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
       - name: Install deps
         run: pnpm install --frozen-lockfile
 
-      # formatter はCIでは "check" 推奨
       - name: Prettier (check)
         run: pnpm -s prettier --check .
 
