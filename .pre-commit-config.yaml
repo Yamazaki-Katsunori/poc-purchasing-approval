@@ -1,0 +1,65 @@
+repos:
+  # ----------------------------
+  # Common
+  # ----------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  # ----------------------------
+  # Backend (Python)
+  #  - uvで入れた ruff/mypy/pyright を使う想定
+  #  - hooks は "local" でOK（uv run で確実に動く）
+  # ----------------------------
+  - repo: local
+    hooks:
+      - id: backend-ruff-format
+        name: backend ruff format
+        entry: bash -lc "cd backend && uv run ruff format"
+        language: system
+        pass_filenames: false
+        files: ^backend/.*\.py$
+
+      - id: backend-ruff-check
+        name: backend ruff check (fix)
+        entry: bash -lc "cd backend && uv run ruff check --fix"
+        language: system
+        pass_filenames: false
+        files: ^backend/.*\.py$
+
+      - id: backend-mypy
+        name: backend mypy
+        entry: bash -lc "cd backend && uv run mypy ."
+        language: system
+        pass_filenames: false
+        files: ^backend/.*\.py$
+
+      - id: backend-pyright
+        name: backend pyright
+        entry: bash -lc "cd backend && uv run pyright"
+        language: system
+        pass_filenames: false
+        files: ^backend/.*\.(py|pyi)$
+
+  # ----------------------------
+  # Frontend (Node)
+  #  - pnpm を使う想定（npm/yarnなら読み替え）
+  # ----------------------------
+  - repo: local
+    hooks:
+      - id: frontend-prettier
+        name: frontend prettier
+        entry: bash -lc "cd frontend && pnpm -s prettier --write ."
+        language: system
+        pass_filenames: false
+        files: ^frontend/.*\.(js|jsx|ts|tsx|json|css|scss|md|yaml|yml)$
+
+      - id: frontend-eslint
+        name: frontend eslint (fix)
+        entry: bash -lc "cd frontend && pnpm -s eslint . --fix"
+        language: system
+        pass_filenames: false
+        files: ^frontend/.*\.(js|jsx|ts|tsx)$

@@ -1,3 +1,16 @@
 .nvimlog
 .devcontainer/.env
 .pnpm-store
+
+# backend
+backend/.venv/
+backend/__pycache__/
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.python-version
+
+# frontend
+frontend/node_modules/
+frontend/.next/
+frontend/dist/
+
