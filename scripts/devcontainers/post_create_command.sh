@@ -115,9 +115,6 @@ PNPM_DEPS=(
 PNPM_DEV_DEPS=(
   "eslint"
   "prettier"
-  "@eslint/js"
-  "typescript-eslint"
-  "globals"
 )
 
 # ----------------------------
