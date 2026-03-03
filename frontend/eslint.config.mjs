@@ -5,6 +5,14 @@ import nextTs from 'eslint-config-next/typescript';
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+
+  // ルール調整
+  {
+    rules: {
+      // 弱めたいものがあればここに定義
+      // 例： "@next/next/no-img-element": "off",
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
