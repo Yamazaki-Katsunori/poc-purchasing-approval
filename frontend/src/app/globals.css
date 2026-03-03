@@ -1,26 +1,89 @@
 @import 'tailwindcss';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* =========================
+   Theme tokens (和風×緑)
+   ========================= */
+@theme {
+  --color-brand-50: oklch(0.97 0.02 160);
+  --color-brand-100: oklch(0.94 0.03 160);
+  --color-brand-600: oklch(0.55 0.12 160);
+  --color-brand-700: oklch(0.48 0.12 160);
+  --color-brand-800: oklch(0.4 0.11 160);
+
+  /* 生成り寄り（紙） */
+  --color-paper: oklch(0.98 0.01 95);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* =========================
+   Base tweaks
+   ========================= */
+@layer base {
+  html {
+    color-scheme: light;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  body {
+    @apply bg-[color:var(--color-paper)] text-neutral-900;
+    font-family: Arial, Helvetica, sans-serif;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* =========================
+   Reusable UI classes
+   ========================= */
+@layer components {
+  .ui-card {
+    @apply rounded-xl border border-neutral-200 bg-white shadow-sm;
+  }
+  .ui-card-header {
+    @apply p-4 border-b border-neutral-200;
+  }
+  .ui-card-content {
+    @apply p-4;
+  }
+  .ui-card-footer {
+    @apply p-4 border-t border-neutral-200;
+  }
+
+  .ui-control {
+    @apply w-full rounded-md border bg-white px-3 py-2 text-sm
+           text-neutral-900 placeholder:text-neutral-400
+           outline-none
+           focus:ring-2 focus:ring-offset-2;
+  }
+  .ui-control--ok {
+    @apply border-neutral-300 focus:ring-brand-600;
+  }
+  .ui-control--error {
+    @apply border-red-500 focus:ring-red-500;
+  }
+
+  .ui-btn {
+    @apply inline-flex items-center justify-center rounded-md
+           text-sm font-medium
+           disabled:opacity-50 disabled:pointer-events-none
+           focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .ui-btn--primary {
+    @apply bg-brand-700 text-white hover:bg-brand-800
+           focus:ring-brand-600;
+  }
+
+  .ui-btn--secondary {
+    @apply border border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50
+           focus:ring-brand-600;
+  }
+
+  .ui-btn--danger {
+    @apply bg-red-600 text-white hover:bg-red-700
+           focus:ring-red-500;
+  }
+
+  .ui-btn--sm {
+    @apply px-3 py-1.5;
+  }
+  .ui-btn--md {
+    @apply px-3.5 py-2;
+  }
 }
