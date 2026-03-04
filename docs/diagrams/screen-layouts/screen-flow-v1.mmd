@@ -1,0 +1,33 @@
+%% docs/diagrams/screen-layouts/screen-flow-v1.mmd
+flowchart LR
+  %% v1 Screen Flow (poc-purchasing-approval) - Left to Right
+
+  Login[Login]
+  Home[Home / Dashboard<br/>申請一覧]
+  NewForm[新規申請作成]
+  NewConfirm[新規申請確認]
+  Detail[申請詳細]
+
+  %% Basic navigation
+  Login -->|ログイン成功| Home
+  Home -->|新規作成| NewForm
+  NewForm -->|確認| NewConfirm
+  NewConfirm -->|作成確定| Home
+
+  %% List -> Detail
+  Home -->|申請を選択| Detail
+  Detail -->|一覧へ戻る| Home
+
+  %% New flow back
+  NewForm -->|キャンセル| Home
+  NewConfirm -->|戻る| NewForm
+
+  %% Role-based behaviors (notes)
+  subgraph RoleBased[申請詳細画面でのロール別表示]
+    direction TB
+    Applicant[申請者: コメント投稿可 / 内容閲覧]
+    Approver[承認者: コメント投稿可 + AI要約表示 + 承認/差し戻し]
+  end
+
+  Detail -.-> Applicant
+  Detail -.-> Approver
