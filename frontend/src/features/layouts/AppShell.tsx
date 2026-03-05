@@ -27,7 +27,7 @@ export default function AppShell({ children, isAuthed }: { children: React.React
 
       {/* ✅ Sidebar は fixed drawer（画面左端） */}
       {isAuthed && effectiveSidebarOpen ? (
-        <aside className="fixed left-0 bottom-0 top-14 z-50 w-72 border-r border-neutral-200 bg-white">
+        <aside className="fixed left-0 bottom-0 top-14 z-50 w-72 border-r-2 border-neutral-300 bg-[color:var(--color-paper)]">
           <Sidebar onNavigate={closeSidebar} />
         </aside>
       ) : null}
