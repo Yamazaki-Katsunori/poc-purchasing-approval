@@ -1,0 +1,36 @@
+// features/layouts/AppShell.tsx（要点だけ）
+'use client';
+
+import { useCallback, useState } from 'react';
+import { Header } from '@/ui/header';
+import { Sidebar } from '@/ui/sidebar';
+
+export default function AppShell({ children, isAuthed }: { children: React.ReactNode; isAuthed: boolean }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const effectiveSidebarOpen = isAuthed && sidebarOpen;
+
+  const toggleSidebar = useCallback(() => setSidebarOpen((v) => !v), []);
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+
+  return (
+    <div className="min-h-dvh">
+      <Header isAuthed={isAuthed} sidebarOpen={effectiveSidebarOpen} onToggleSidebar={toggleSidebar} />
+
+      {/* ✅ Main は常に中央 */}
+      <main className="px-4 py-6">
+        <div className="mx-auto w-full max-w-3xl">
+          <div className="ui-card">
+            <div className="ui-card-content">{children}</div>
+          </div>
+        </div>
+      </main>
+
+      {/* ✅ Sidebar は fixed drawer（画面左端） */}
+      {isAuthed && effectiveSidebarOpen ? (
+        <aside className="fixed left-0 bottom-0 top-14 z-50 w-72 border-r border-neutral-200 bg-white">
+          <Sidebar onNavigate={closeSidebar} />
+        </aside>
+      ) : null}
+    </div>
+  );
+}
