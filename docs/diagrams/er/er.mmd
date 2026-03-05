@@ -45,8 +45,21 @@ erDiagram
         timestamp created_at
     }
 
+    PURCHASING_APPROVAL_STATUSES {
+        %% ステータスID
+        int id PK
+        %% ステータスコード（例: DRAFT/PENDING/RETURNED/APPROVED）
+        string code
+        %% ステータス名
+        string name
+        %% 作成日時
+        timestamp created_at
+        %% 更新日時
+        timestamp updated_at
+    }
+
     PURCHASING_APPROVALS {
-        %% 購買申請ID
+        %% 購買申請ID（提出後の本申請）
         int id PK
         %% 申請者ユーザーID
         int user_id FK
@@ -75,13 +88,29 @@ erDiagram
         timestamp updated_at
     }
 
-    PURCHASING_APPROVAL_STATUSES {
-        %% ステータスID
+    DRAFT_PURCHASING_APPROVALS {
+        %% 下書きID（未提出の下書き）
         int id PK
-        %% ステータスコード（例: DRAFT/PENDING）
-        string code
-        %% ステータス名
-        string name
+        %% 申請者ユーザーID
+        int user_id FK
+
+        %% 件名（下書きなのでNULL許容想定）
+        string title
+        %% 購買種別（下書きなのでNULL許容想定）
+        string purchase_type
+        %% 金額（下書きなのでNULL許容想定）
+        decimal amount
+        %% 申請理由（下書きなのでNULL許容想定）
+        text reason
+
+        %% 現在ステータスID（DRAFTを想定）
+        int current_status_id FK
+        %% 現在イベントID（最新イベント参照・最適化用）
+        int current_event_id FK
+
+        %% 最終操作日時（一覧の並び替え等に利用）
+        timestamp last_touched_at
+
         %% 作成日時
         timestamp created_at
         %% 更新日時
@@ -89,23 +118,43 @@ erDiagram
     }
 
     PURCHASING_APPROVAL_EVENTS {
-        %% 申請イベントID
+        %% イベントID
         int id PK
-        %% 購買申請ID
-        int purchasing_approval_id FK
+
+        %% ポリモーフィック参照
+        %% subject_type: approval / draft
+        string subject_type
+        %% subject_id: 対象テーブルのID
+        int subject_id
+
         %% 実行者ユーザーID
         int performed_by FK
         %% 遷移先ステータスID
         int status_id FK
 
-        %% アクション（例: submit/approve/reject/return/cancel/comment）
+        %% アクション（例: draft_created/submit/approve/return/comment）
         string action
-        %% イベントコメント（任意）
+        %% イベント付随メモ（差し戻し理由等・任意）
         text comment
 
         %% イベント発生日時（業務時刻）
         timestamp event_at
         %% 作成日時（記録時刻）
+        timestamp created_at
+        %% 更新日時
+        timestamp updated_at
+    }
+
+    PURCHASING_APPROVAL_COMMENTS {
+        %% コメントID
+        int id PK
+        %% 紐づくイベントID
+        int event_id FK
+        %% コメント投稿者ユーザーID
+        int commented_by FK
+        %% コメント本文
+        text comment_text
+        %% 作成日時
         timestamp created_at
         %% 更新日時
         timestamp updated_at
@@ -126,32 +175,23 @@ erDiagram
         timestamp created_at
     }
 
-    PURCHASING_APPROVAL_COMMENTS {
-        %% コメントID
-        int id PK
-        %% 紐づくイベントID
-        int event_id FK
-        %% コメント投稿者ユーザーID
-        int commented_by FK
-        %% コメント本文
-        text comment_text
-        %% 作成日時
-        timestamp created_at
-        %% 更新日時
-        timestamp updated_at
-    }
-
-    %% relations
+    %% relations (DB-level FKs)
     USER_POSITIONS ||--o{ USERS : "has"
-    USERS ||--o{ PURCHASING_APPROVALS : "creates"
-
     USERS ||--o{ USER_ROLES : "has"
     ROLES ||--o{ USER_ROLES : "assigned"
 
-    PURCHASING_APPROVALS ||--o{ PURCHASING_APPROVAL_EVENTS : "has"
-    PURCHASING_APPROVAL_STATUSES ||--o{ PURCHASING_APPROVAL_EVENTS : "defines"
-
-    PURCHASING_APPROVAL_EVENTS ||--o{ PURCHASING_APPROVAL_AI_SUMMARIES : "generates"
-    PURCHASING_APPROVAL_EVENTS ||--o{ PURCHASING_APPROVAL_COMMENTS : "has"
+    USERS ||--o{ PURCHASING_APPROVALS : "creates"
+    USERS ||--o{ DRAFT_PURCHASING_APPROVALS : "creates"
 
     PURCHASING_APPROVAL_STATUSES ||--o{ PURCHASING_APPROVALS : "current"
+    PURCHASING_APPROVAL_STATUSES ||--o{ DRAFT_PURCHASING_APPROVALS : "current"
+    PURCHASING_APPROVAL_STATUSES ||--o{ PURCHASING_APPROVAL_EVENTS : "defines"
+
+    USERS ||--o{ PURCHASING_APPROVAL_EVENTS : "performs"
+
+    PURCHASING_APPROVAL_EVENTS ||--o{ PURCHASING_APPROVAL_COMMENTS : "has"
+    PURCHASING_APPROVAL_EVENTS ||--o{ PURCHASING_APPROVAL_AI_SUMMARIES : "generates"
+
+    %% NOTE:
+    %% PURCHASING_APPROVAL_EVENTS.subject_type/subject_id はポリモーフィック参照のため
+    %% DBのFK線では表現しづらく、アプリ層で整合性を担保する前提
