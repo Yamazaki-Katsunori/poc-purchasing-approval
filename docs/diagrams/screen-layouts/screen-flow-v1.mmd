@@ -10,23 +10,25 @@ flowchart LR
 
   %% Basic navigation
   Login -->|ログイン成功| Home
+
+  %% Create flow (input -> confirm -> submit)
   Home -->|新規作成| NewForm
   NewForm -->|確認| NewConfirm
-  NewConfirm -->|作成確定| Home
+  NewConfirm -->|提出（submit）成功| Detail
+
+  %% Create flow back
+  NewForm -->|キャンセル| Home
+  NewConfirm -->|戻る| NewForm
 
   %% List -> Detail
   Home -->|申請を選択| Detail
   Detail -->|一覧へ戻る| Home
 
-  %% New flow back
-  NewForm -->|キャンセル| Home
-  NewConfirm -->|戻る| NewForm
-
   %% Role-based behaviors (notes)
   subgraph RoleBased[申請詳細画面でのロール別表示]
     direction TB
-    Applicant[申請者: コメント投稿可 / 内容閲覧]
-    Approver[承認者: コメント投稿可 + AI要約表示 + 承認/差し戻し]
+    Applicant[申請者: コメント投稿可 / 内容閲覧 / （RETURNED時のみ）編集・再提出]
+    Approver[承認者: コメント投稿可 + AI要約表示 + 承認/差し戻し（PENDING時）]
   end
 
   Detail -.-> Applicant
