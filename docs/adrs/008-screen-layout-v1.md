@@ -6,7 +6,7 @@ Accepted
 
 ## Related Diagrams
 
-- Screen Flow (v1): [docs/diagrams/screen-layouts/screen-flow-v1.mmd](../diagrams/screen-layouts/screen-flow-v1.mmd)
+- Screen Flow (v1): [../diagrams/screen-layouts/screen-flow-v1.mmd](../diagrams/screen-layouts/screen-flow-v1.mmd)
 
 ## Context
 
