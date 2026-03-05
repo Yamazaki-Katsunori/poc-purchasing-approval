@@ -8,7 +8,10 @@ type SidebarItem = {
   href: string;
 };
 
-const SIDEBAR_ITEMS: SidebarItem[] = [{ label: '新規申請作成', href: '/applications/new' }];
+const SIDEBAR_ITEMS: SidebarItem[] = [
+  { label: 'ホーム', href: '/home' },
+  { label: '新規申請作成', href: '/approvals/new' },
+];
 
 type SidebarProps = {
   onNavigate?: () => void;
@@ -23,7 +26,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
             key={item.href}
             href={item.href}
             onClick={onNavigate}
-            className="block rounded-md px-3 py-2 text-sm font-semibold hover:bg-neutral-100"
+            className="block rounded-md px-3 py-2 text-sm font-semibold hover:bg-neutral-200"
           >
             {item.label}
           </Link>
