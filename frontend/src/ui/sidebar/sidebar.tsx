@@ -1,4 +1,14 @@
 import Link from 'next/link';
+import { ReactNode } from 'react';
+
+// NOTE:
+// サイドバーアイテム
+type SidebarItem = {
+  label: string;
+  href: string;
+};
+
+const SIDEBAR_ITEMS: SidebarItem[] = [{ label: '新規申請作成', href: '/applications/new' }];
 
 type SidebarProps = {
   onNavigate?: () => void;
@@ -6,15 +16,18 @@ type SidebarProps = {
 
 export function Sidebar({ onNavigate }: SidebarProps) {
   return (
-    <aside className="h-full w-full bg-white p-4">
-      <nav className="space-y-2">
-        <Link
-          href="/applications/new"
-          onClick={onNavigate}
-          className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-neutral-100"
-        >
-          新規申請作成
-        </Link>
+    <aside className="h-full w-full bg-[color:var(--color-paper)] p-4">
+      <nav className="flex h-full flex-col gap-2 pt-8 text-center">
+        {SIDEBAR_ITEMS.map((item: SidebarItem) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={onNavigate}
+            className="block rounded-md px-3 py-2 text-sm font-semibold hover:bg-neutral-100"
+          >
+            {item.label}
+          </Link>
+        ))}
       </nav>
     </aside>
   );

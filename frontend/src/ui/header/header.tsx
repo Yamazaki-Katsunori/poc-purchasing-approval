@@ -1,5 +1,7 @@
 'use client';
 
+import { Hamburger } from '@/ui/hamburger';
+
 type HeaderProps = {
   isAuthed: boolean;
   sidebarOpen: boolean;
@@ -10,7 +12,7 @@ type HeaderProps = {
 
 export function Header({ isAuthed, sidebarOpen, onToggleSidebar, onLogin, onLogout }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-[60] border-b border-neutral-200 bg-[color:var(--color-paper)]/80 backdrop-blur">
+    <header className="sticky top-0 z-[60] border-b-2 border-neutral-300 bg-[color:var(--color-paper)]/80 backdrop-blur">
       <div className="relative h-14">
         {/* ハンバーガー：左端寄せ */}
         {isAuthed ? (
@@ -21,11 +23,7 @@ export function Header({ isAuthed, sidebarOpen, onToggleSidebar, onLogin, onLogo
             aria-expanded={sidebarOpen}
             onClick={onToggleSidebar}
           >
-            <span aria-hidden className="grid gap-1">
-              <span className="block h-[2px] w-4 bg-neutral-800" />
-              <span className="block h-[2px] w-4 bg-neutral-800" />
-              <span className="block h-[2px] w-4 bg-neutral-800" />
-            </span>
+            <Hamburger />
           </button>
         ) : null}
 
