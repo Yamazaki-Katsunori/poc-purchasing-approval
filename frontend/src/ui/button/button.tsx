@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/shared/cn';
 import { ComponentPropsWithoutRef } from 'react';
 

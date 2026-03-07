@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ReactNode } from 'react';
 
 // NOTE:
 // サイドバーアイテム
@@ -9,7 +8,7 @@ type SidebarItem = {
 };
 
 const SIDEBAR_ITEMS: SidebarItem[] = [
-  { label: 'ホーム', href: '/home' },
+  { label: 'ホーム', href: '/' },
   { label: '新規申請作成', href: '/approvals/new' },
 ];
 
