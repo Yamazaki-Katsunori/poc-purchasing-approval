@@ -3,6 +3,7 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { LoginSchema, LoginValueTypes } from '../schemas/login-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 
 export const useLoginForm = () => {
   const form = useForm<LoginValueTypes>({
@@ -15,8 +16,13 @@ export const useLoginForm = () => {
     },
   });
 
+  const router = useRouter();
   const onSubmit: SubmitHandler<LoginValueTypes> = async (data) => {
-    console.log('submit data', data);
+    document.cookie = 'mock_token=dummy-token; path=/';
+    router.push('/');
+    router.refresh();
+
+    console.log(`document.cookie: ${document.cookie}`);
   };
 
   return {
