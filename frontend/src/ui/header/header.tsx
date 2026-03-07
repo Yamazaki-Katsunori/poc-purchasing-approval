@@ -1,6 +1,7 @@
 'use client';
 
 import { Hamburger } from '@/ui/hamburger';
+import { Button } from '@/ui/button';
 
 type HeaderProps = {
   isAuthed: boolean;
@@ -16,7 +17,7 @@ export function Header({ isAuthed, sidebarOpen, onToggleSidebar, onLogin, onLogo
       <div className="relative h-14">
         {/* ハンバーガー：左端寄せ */}
         {isAuthed ? (
-          <button
+          <Button
             type="button"
             className="ui-btn ui-btn--secondary ui-btn--sm absolute left-2 top-1/2 -translate-y-1/2"
             aria-label={sidebarOpen ? 'サイドバーを閉じる' : 'サイドバーを開く'}
@@ -24,11 +25,11 @@ export function Header({ isAuthed, sidebarOpen, onToggleSidebar, onLogin, onLogo
             onClick={onToggleSidebar}
           >
             <Hamburger />
-          </button>
+          </Button>
         ) : null}
 
         {/* 中央コンテナ */}
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-8">
           {/* 左：ロゴ（ハンバーガーと被らないように余白） */}
           <div className="flex items-center gap-2 pl-10">
             <div className="h-8 w-8 rounded-md bg-brand-700" aria-hidden />

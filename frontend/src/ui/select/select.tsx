@@ -1,3 +1,4 @@
+'use client';
 import { cn } from '@/shared/cn';
 import type { ComponentProps } from 'react';
 
