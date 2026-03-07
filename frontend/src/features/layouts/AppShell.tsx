@@ -4,6 +4,7 @@
 import { useCallback, useState } from 'react';
 import { Header } from '@/ui/header';
 import { Sidebar } from '@/ui/sidebar';
+import { useLogout } from './hooks/logout-hook';
 
 export default function AppShell({ children, isAuthed }: { children: React.ReactNode; isAuthed: boolean }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -12,9 +13,16 @@ export default function AppShell({ children, isAuthed }: { children: React.React
   const toggleSidebar = useCallback(() => setSidebarOpen((v) => !v), []);
   const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
+  const { handleLogout } = useLogout();
+
   return (
     <div className="min-h-dvh">
-      <Header isAuthed={isAuthed} sidebarOpen={effectiveSidebarOpen} onToggleSidebar={toggleSidebar} />
+      <Header
+        isAuthed={isAuthed}
+        sidebarOpen={effectiveSidebarOpen}
+        onToggleSidebar={toggleSidebar}
+        onLogout={handleLogout}
+      />
 
       {/* ✅ Main は常に中央 */}
       <main className="px-4 py-6">
