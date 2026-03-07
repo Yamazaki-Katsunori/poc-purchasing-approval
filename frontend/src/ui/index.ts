@@ -7,3 +7,4 @@ export * from './button';
 export * from './header';
 export * from './sidebar';
 export * from './hamburger';
+export * from './table';
