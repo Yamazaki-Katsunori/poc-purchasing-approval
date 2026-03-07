@@ -1,4 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui';
+import Link from 'next/link';
 
 // demo data
 type ApprovalItem = {
@@ -42,7 +43,15 @@ export default function Page() {
         <TableBody>
           {items.map((item: ApprovalItem) => (
             <TableRow key={item.id}>
-              <TableCell>{item.requestNo}</TableCell>
+              <TableCell>
+                <Link
+                  key={item.id}
+                  href={`/approvals/:${item.id}`}
+                  className="font-medium text-blue-600 underline-offset-2 hover:underline hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  {item.requestNo}
+                </Link>
+              </TableCell>
               <TableCell>{item.title}</TableCell>
               <TableCell>{item.applicantName}</TableCell>
               <TableCell>{item.status}</TableCell>
