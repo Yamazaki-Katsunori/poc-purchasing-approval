@@ -115,6 +115,13 @@ PNPM_DEPS=(
 PNPM_DEV_DEPS=(
   "eslint"
   "prettier"
+  "vitest"
+  "jsdom"
+  "@vitejs/plugin-react"
+  "@testing-library/react"
+  "@testing-library/jest-dom"
+  "@testing-library/user-event"
+  "@vitest/coverage-v8"
 )
 
 # ----------------------------
