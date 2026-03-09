@@ -122,6 +122,11 @@ PNPM_DEV_DEPS=(
   "@testing-library/jest-dom"
   "@testing-library/user-event"
   "@vitest/coverage-v8"
+  "@playwright/test"
+)
+
+PLAYWRIGHT_BROWSERS=(
+  "chromium"
 )
 
 # ----------------------------
@@ -135,17 +140,30 @@ DEPS_FINGERPRINT="$(
     echo "frontend:$FRONTEND_ROOT"
     printf "pnpm:%s\n" "${PNPM_DEPS[@]}"
     printf "pnpm-dev:%s\n" "${PNPM_DEV_DEPS[@]}"
+    printf "playwright-browser:%s\n" "${PLAYWRIGHT_BROWSERS[@]}"
+  } | sha256
+)"
+
+PLAYWRIGHT_FINGERPRINT="$(
+  {
+    printf "playwright-browser:%s\n" "${PLAYWRIGHT_BROWSERS[@]}"
   } | sha256
 )"
 
 MARKER_DIR="/var/tmp"
 MARKER_NAME="devcontainer-postcreate.${DEPS_FINGERPRINT}.done"
 POSTCREATE_MARKER="${MARKER_DIR}/${MARKER_NAME}"
+PLAYWRIGHT_MARKER="${MARKER_DIR}/playwright.${PLAYWRIGHT_FINGERPRINT}.done"
 
 log "deps fingerprint: $DEPS_FINGERPRINT"
 log "marker: $POSTCREATE_MARKER"
+log "playwright fingerprint: $PLAYWRIGHT_FINGERPRINT"
+log "playwright marker: $PLAYWRIGHT_MARKER"
 
 mkdir -p "$MARKER_DIR"
+
+# ★古いplaywright marker掃除（最新fingerprint以外は削除）
+find "$MARKER_DIR" -maxdepth 1 -type f -name 'playwright.*.done' ! -name "$(basename "$PLAYWRIGHT_MARKER")" -delete || true
 
 # ★古いmarker掃除（最新fingerprint以外は削除）
 find "$MARKER_DIR" -maxdepth 1 -type f -name 'devcontainer-postcreate.*.done' ! -name "$MARKER_NAME" -delete || true
@@ -218,6 +236,18 @@ if [[ -d "$FRONTEND_ROOT" && -f "$FRONTEND_ROOT/package.json" ]]; then
       run_shell "pnpm install --frozen-lockfile"
     else
       run_shell "pnpm install"
+    fi
+
+    # Playwright: OS dependencies + browser install
+    if grep -q '"@playwright/test"' package.json; then
+      if [[ ! -f "$PLAYWRIGHT_MARKER" ]]; then
+        run_shell "pnpm exec playwright install-deps ${PLAYWRIGHT_BROWSERS[*]}"
+        run_shell "pnpm exec playwright install ${PLAYWRIGHT_BROWSERS[*]}"
+        touch "$PLAYWRIGHT_MARKER"
+        log "playwright marker created: $PLAYWRIGHT_MARKER"
+      else
+        log "playwright marker found => skip playwright install step"
+      fi
     fi
   fi
 
