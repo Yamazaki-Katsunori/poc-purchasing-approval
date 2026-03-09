@@ -1,3 +1,9 @@
+import { ApprovalsNewForm } from '@/features/approvals/new/approvalsNewForm';
+
 export default function Page() {
-  return <main>this is Approval New Page !!</main>;
+  return (
+    <main>
+      <ApprovalsNewForm />
+    </main>
+  );
 }
