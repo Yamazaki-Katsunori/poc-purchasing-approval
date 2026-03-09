@@ -2,15 +2,19 @@
 
 import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle, Input, Select, Textarea } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { ApprovalsNewFormSchema, ApprovalsNewFormTypes } from './schemas/approvals-new-schema';
 import { useApprovalButton } from './hooks/action-approval-button';
+import { formatNumberWithComma, normalizeNumberInput } from '@/shared/numberInput';
+import { useState } from 'react';
 
 export function ApprovalsNewForm() {
   const {
     register,
+    control,
     formState: { errors, isSubmitted },
     handleSubmit,
+    setValue,
   } = useForm<ApprovalsNewFormTypes>({
     resolver: zodResolver(ApprovalsNewFormSchema),
     mode: 'onSubmit',
@@ -25,6 +29,18 @@ export function ApprovalsNewForm() {
 
   const { onSubmit, onCancel } = useApprovalButton();
 
+  const [isAmountFocused, setIsAmountFocused] = useState(false);
+
+  const amount = useWatch({
+    control,
+    name: 'amount',
+    defaultValue: '',
+  });
+
+  const amountRegister = register('amount');
+
+  const displayAmount = isAmountFocused ? amount : formatNumberWithComma(amount);
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Card>
@@ -34,13 +50,13 @@ export function ApprovalsNewForm() {
 
         <CardContent>
           <div className="p-2">
-            <label htmlFor="title">タイトル</label>
-            <span>{errors.title && 'エラー'}</span>
+            <label htmlFor="title">タイトル:</label>
+            <span className="text-red-500 pl-2">{isSubmitted && errors.title && errors.title.message}</span>
             <Input id="title" type="text" placeholder="申請タイトルを入力してください" {...register('title')} />
           </div>
 
           <div className="p-2">
-            <label htmlFor="purchase_type">購買種別</label>
+            <label htmlFor="purchase_type">購買種別:</label>
             <Select
               id="purchase_type"
               defaultValue=""
@@ -55,14 +71,33 @@ export function ApprovalsNewForm() {
           </div>
 
           <div className="p-2">
-            <label htmlFor="amount">購入金額</label>
-            <span>{errors.amount && 'エラー'}</span>
-            <Input id="amount" type="text" placeholder="購入金額を入力してください" {...register('amount')} />
+            <label htmlFor="amount">購入金額:</label>
+            <span className="text-red-500 pl-2">{isSubmitted && errors.amount && errors.amount.message}</span>
+            <Input
+              id="amount"
+              type="text"
+              inputMode="numeric"
+              placeholder="購入金額を入力してください"
+              name={amountRegister.name}
+              value={displayAmount}
+              onChange={(e) => {
+                const normalized = normalizeNumberInput(e.target.value);
+                console.log(normalized);
+                setValue('amount', normalized, { shouldValidate: true });
+              }}
+              onFocus={() => {
+                setIsAmountFocused(true);
+              }}
+              onBlur={(e) => {
+                setIsAmountFocused(false);
+                amountRegister.onBlur(e);
+              }}
+            />
           </div>
 
           <div className="p-2">
-            <label htmlFor="reason">申請理由</label>
-            <span>{errors.reason && 'エラー'}</span>
+            <label htmlFor="reason">申請理由:</label>
+            <span className="text-red-500 pl-2">{isSubmitted && errors.reason && errors.reason.message}</span>
             <Textarea id="reason" placeholder="申請理由を入力してください" {...register('reason')} />
           </div>
         </CardContent>
