@@ -4,7 +4,7 @@ from typing import Final
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-DATABASE_URL: Final[str] = os.getenv("DATABASE_URL", "postgresql://app:app@db:5432/app")
+DATABASE_URL: Final[str] = os.getenv("DATABASE_URL", "postgresql+psycopg://app:app@db:5432/app")
 
 engine = create_engine(
     DATABASE_URL,

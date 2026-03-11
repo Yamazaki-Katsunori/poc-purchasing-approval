@@ -6,10 +6,13 @@ from src.models.purchasing_approval_status import PurchasingApprovalStatus
 
 def seed_purchasing_approval_statuses() -> None:
     seed_statuses = [
-        {"code": "draft", "name": "下書き", "sort_order": 1},
-        {"code": "submitted", "name": "申請中", "sort_order": 2},
-        {"code": "approved", "name": "承認済み", "sort_order": 3},
-        {"code": "rejected", "name": "却下", "sort_order": 4},
+        {
+            "code": "draft",
+            "name": "下書き",
+        },
+        {"code": "submitted", "name": "申請中"},
+        {"code": "approved", "name": "承認済み"},
+        {"code": "rejected", "name": "却下"},
     ]
 
     with SessionLocal() as session:
@@ -26,7 +29,6 @@ def seed_purchasing_approval_statuses() -> None:
                     PurchasingApprovalStatus(
                         code=status["code"],
                         name=status["name"],
-                        sort_order=status["sort_order"],
                     )
                 )
                 print(f"insert status: {status['code']}")

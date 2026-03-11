@@ -11,19 +11,19 @@ def seed_users() -> None:
         {
             "name": "管理者ユーザー",
             "email": "admin@example.com",
-            "password": "admin1234",
+            "password": "password",
             "position_name": "情報システム部 部長",
         },
         {
             "name": "承認者ユーザー",
             "email": "approver@example.com",
-            "password": "approver1234",
+            "password": "password",
             "position_name": "購買部 マネージャー",
         },
         {
             "name": "申請者ユーザー",
             "email": "applicant@example.com",
-            "password": "applicant1234",
+            "password": "password",
             "position_name": "営業部 一般社員",
         },
     ]
@@ -45,7 +45,7 @@ def seed_users() -> None:
                     User(
                         name=user_data["name"],
                         email=user_data["email"],
-                        hashed_password=get_password_hash(user_data["password"]),
+                        password_hash=get_password_hash(user_data["password"]),
                         position_id=position.id,
                     )
                 )
