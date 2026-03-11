@@ -6,4 +6,16 @@ class LoginRequest(BaseModel):
         description="ログイン用メールアドレス",
         examples=["test@example.com"],
     )
-    password: str = Field(min_length=8, max_length=255, description="ログイン用パスワード", examples=["password1234"])
+    password: str = Field(min_length=6, max_length=255, description="ログイン用パスワード", examples=["password1234"])
+
+
+class LoginUserResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str
+    user: LoginUserResponse

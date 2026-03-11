@@ -30,3 +30,7 @@ line-ending = "auto"
 [lint.per-file-ignores]
 # テストは未使用 import や assert などが出がちなので緩める（必要なら）
 "tests/**.py" = ["F401"]
+
+[lint.flake8-bugbear]
+# Allow default arguments like, e.g., `data: List[str] = fastapi.Query(None)`.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
