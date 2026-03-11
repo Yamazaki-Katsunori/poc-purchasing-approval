@@ -1,10 +1,13 @@
+'use client';
+
+import { logoutApi } from '@/features/api/logout';
 import { useRouter } from 'next/navigation';
 
 export const useLogout = () => {
   const router = useRouter();
 
-  const handleLogout = () => {
-    document.cookie = 'mock_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+  const handleLogout = async () => {
+    await logoutApi();
 
     router.push('/login');
     router.refresh();
