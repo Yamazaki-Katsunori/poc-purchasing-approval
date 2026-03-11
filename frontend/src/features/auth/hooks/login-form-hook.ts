@@ -4,6 +4,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { LoginSchema, LoginValueTypes } from '../schemas/login-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useLoginMutation } from './login-mutation';
 
 export const useLoginForm = () => {
   const form = useForm<LoginValueTypes>({
@@ -17,8 +18,14 @@ export const useLoginForm = () => {
   });
 
   const router = useRouter();
+  const loginMutaion = useLoginMutation();
+
   const onSubmit: SubmitHandler<LoginValueTypes> = async (data) => {
-    document.cookie = 'mock_token=dummy-token; path=/';
+    const result = await loginMutaion.mutateAsync(data);
+
+    console.debug(result);
+
+    document.cookie = `mock_token=${result.access_token}; path=/`;
     router.push('/');
     router.refresh();
 
@@ -28,5 +35,7 @@ export const useLoginForm = () => {
   return {
     ...form,
     onSubmit,
+    isPendng: loginMutaion.isPending,
+    serverError: loginMutaion.error?.message ?? null,
   };
 };
