@@ -2,7 +2,6 @@ import { apiClient } from '@/shared/api/client';
 import { LoginValueTypes } from '../auth/schemas/login-schema';
 
 export type LoginResponse = {
-  access_token: string;
   token_type: 'bearer';
   user: {
     id: number;

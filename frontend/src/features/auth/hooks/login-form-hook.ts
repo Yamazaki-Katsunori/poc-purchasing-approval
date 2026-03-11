@@ -25,7 +25,7 @@ export const useLoginForm = () => {
 
     console.debug(result);
 
-    document.cookie = `mock_token=${result.access_token}; path=/`;
+    // document.cookie = `mock_token=${result.access_token}; path=/`;
     router.push('/');
     router.refresh();
 

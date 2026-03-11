@@ -16,6 +16,9 @@ class LoginUserResponse(BaseModel):
 
 
 class LoginResponse(BaseModel):
-    access_token: str
     token_type: str
     user: LoginUserResponse
+
+
+class LogoutResponse(BaseModel):
+    message: str

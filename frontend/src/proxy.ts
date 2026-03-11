@@ -8,22 +8,13 @@ export default function proxy(request: NextRequest) {
   const exclusionPath = pathname.startsWith('/_next') || pathname.startsWith('/favicon.ico');
   pathname.includes('.');
 
-  // debug cookie
-  const cookie = request.cookies.get('nextjs');
-  console.log(cookie);
-
-  const allCookies = request.cookies.getAll();
-  console.log(allCookies);
-
-  request.cookies.has('nextjs');
-
   // 静的ファイルや next.js 内部パスは除外
   if (exclusionPath) {
     return NextResponse.next();
   }
 
   const isPublicPath = PUBLIC_PATHS.some((path) => pathname.startsWith(path));
-  const token = request.cookies.get('mock_token')?.value;
+  const token = request.cookies.get('access_token')?.value;
 
   // 未ログインで保護ページにアクセスしたら /login へ遷移
   if (!token && !isPublicPath) return NextResponse.redirect(new URL('/login', request.url));
