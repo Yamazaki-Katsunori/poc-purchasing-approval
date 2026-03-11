@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { ReactNode } from 'react';
 import AppShell from '@/features/layouts/AppShell';
+import { Providers } from './providers';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -27,7 +27,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AppShell isAuthed={isAuthed}>{children}</AppShell>
+        <Providers>
+          <AppShell isAuthed={isAuthed}>{children}</AppShell>
+        </Providers>
       </body>
     </html>
   );
