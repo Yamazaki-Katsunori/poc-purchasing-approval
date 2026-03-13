@@ -1,32 +1,40 @@
-'use client';
-
 import { Hamburger } from '@/ui/hamburger';
 import { Button } from '@/ui/button';
 
 type HeaderProps = {
   isAuthed: boolean;
-  sidebarOpen: boolean;
   onToggleSidebar: () => void;
-  onLogin?: () => void;
+  userName?: string;
+  email?: string;
+  positionName?: string;
+  roleName?: string;
+  isLoading?: boolean;
   onLogout?: () => void;
 };
 
-export function Header({ isAuthed, sidebarOpen, onToggleSidebar, onLogin, onLogout }: HeaderProps) {
+export function Header({
+  isAuthed,
+  onToggleSidebar,
+  userName,
+  email,
+  positionName,
+  roleName,
+  isLoading,
+  onLogout,
+}: HeaderProps) {
   return (
-    <header className="sticky top-0 z-[60] border-b-2 border-neutral-300 bg-[color:var(--color-paper)]/80 backdrop-blur">
+    <header className="sticky top-0 z-60 border-b-2 border-neutral-300 bg-paper/80 backdrop-blur">
       <div className="relative h-14">
         {/* ハンバーガー：左端寄せ */}
-        {isAuthed ? (
+        {isAuthed && (
           <Button
             type="button"
             className="ui-btn ui-btn--secondary ui-btn--sm absolute left-2 top-1/2 -translate-y-1/2"
-            aria-label={sidebarOpen ? 'サイドバーを閉じる' : 'サイドバーを開く'}
-            aria-expanded={sidebarOpen}
             onClick={onToggleSidebar}
           >
             <Hamburger />
           </Button>
-        ) : null}
+        )}
 
         {/* 中央コンテナ */}
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-8">
@@ -36,15 +44,21 @@ export function Header({ isAuthed, sidebarOpen, onToggleSidebar, onLogin, onLogo
             <span className="font-semibold tracking-wide">poc-purchasing-approval</span>
           </div>
 
-          {/* 右：ログイン/ログアウト（復活） */}
+          {/* 右：ログインユーザー情報 ログアウトボタン */}
           <div className="flex items-center gap-2">
-            {isAuthed ? (
+            {isAuthed && !isLoading && (
+              <div className="text-sm text-right">
+                <div className="font-semibold">`ログインユーザー: ${userName}`</div>
+                <div>`メールアドレス: ${email}`</div>
+                <div>
+                  `役職 / 権限: ${positionName} / ${roleName} `
+                </div>
+              </div>
+            )}
+
+            {isAuthed && (
               <button className="ui-btn ui-btn--secondary ui-btn--sm" type="button" onClick={onLogout}>
                 ログアウト
-              </button>
-            ) : (
-              <button className="ui-btn ui-btn--primary ui-btn--sm" type="button" onClick={onLogin}>
-                ログイン
               </button>
             )}
           </div>

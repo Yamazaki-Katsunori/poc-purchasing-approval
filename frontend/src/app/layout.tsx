@@ -21,14 +21,11 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  // TODO: 後で auth 実装に置き換え（cookie / session / middleware など）
-  const isAuthed = true;
-
   return (
     <html lang="ja">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
-          <AppShell isAuthed={isAuthed}>{children}</AppShell>
+          <AppShell>{children}</AppShell>
         </Providers>
       </body>
     </html>

@@ -4,6 +4,9 @@ type ApiClientOptions = {
   method?: HttpMethodType;
   body?: unknown;
   headers?: HeadersInit;
+  credentials?: RequestCredentials;
+  cache?: RequestCache;
+  signal?: AbortSignal;
 };
 
 export class ApiError extends Error {
@@ -17,7 +20,7 @@ export class ApiError extends Error {
 }
 
 export const apiClient = async <TResponse>(path: string, options: ApiClientOptions = {}): Promise<TResponse> => {
-  const { method = 'GET', body, headers } = options;
+  const { method = 'GET', body, headers, credentials, cache, signal } = options;
 
   const response = await fetch(`/api${path}`, {
     method,
@@ -26,6 +29,9 @@ export const apiClient = async <TResponse>(path: string, options: ApiClientOptio
       ...headers,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
+    credentials,
+    cache,
+    signal,
   });
 
   if (!response.ok) {
@@ -40,6 +46,11 @@ export const apiClient = async <TResponse>(path: string, options: ApiClientOptio
       // response body が json でない場合は既定メッセージのまま
     }
     throw new ApiError(message, response.status);
+  }
+
+  // NOTE: レスポンスボディなし (204 No Content) のAPI対策(暫定)
+  if (response.status === 204) {
+    return undefined as TResponse;
   }
 
   return response.json() as Promise<TResponse>;
