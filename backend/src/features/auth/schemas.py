@@ -22,3 +22,11 @@ class LoginResponse(BaseModel):
 
 class LogoutResponse(BaseModel):
     message: str
+
+
+class MeResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+    position_name: str | None = None
+    role_name: str | None = None
