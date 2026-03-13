@@ -5,6 +5,8 @@ import { LoginSchema, LoginValueTypes } from '../schemas/login-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useLoginMutation } from './login-mutation';
+import { useQueryClient } from '@tanstack/react-query';
+import { CURRENT_USER_QUERY_KEY } from '@/features/layouts/hooks/useCurrentUser';
 
 export const useLoginForm = () => {
   const form = useForm<LoginValueTypes>({
@@ -18,12 +20,15 @@ export const useLoginForm = () => {
   });
 
   const router = useRouter();
+  const queryClient = useQueryClient();
   const loginMutaion = useLoginMutation();
 
   const onSubmit: SubmitHandler<LoginValueTypes> = async (data) => {
     const result = await loginMutaion.mutateAsync(data);
 
     console.debug(result);
+
+    await queryClient.invalidateQueries({ queryKey: CURRENT_USER_QUERY_KEY });
 
     router.push('/');
     router.refresh();
