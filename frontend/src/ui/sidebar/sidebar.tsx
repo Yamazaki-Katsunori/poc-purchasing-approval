@@ -13,24 +13,36 @@ const SIDEBAR_ITEMS: SidebarItem[] = [
 ];
 
 type SidebarProps = {
-  onNavigate?: () => void;
+  isOpen: boolean;
+  onClose?: () => void;
 };
 
-export function Sidebar({ onNavigate }: SidebarProps) {
+export function Sidebar({ isOpen, onClose }: SidebarProps) {
+  if (!isOpen) return null;
+
   return (
-    <aside className="h-full w-full bg-[color:var(--color-paper)] p-4">
-      <nav className="flex h-full flex-col gap-2 pt-8 text-center">
-        {SIDEBAR_ITEMS.map((item: SidebarItem) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onNavigate}
-            className="block rounded-md px-3 py-2 text-sm font-semibold hover:bg-neutral-200"
-          >
-            {item.label}
-          </Link>
-        ))}
-      </nav>
+    <aside className="fixed left-0 bottom-0 top-14 z-50 w-72 border-r-2 border-neutral-300 bg-paper">
+      {/* サイドバー本体 */}
+      <div className="fixed left-0 top-14 z-50 h-[calc(100dvh-3.5rem)] w-72 border-r-2 border-neutral-300 bg-paper">
+        <div className="flex items-center justify-between border-b-2 border-neutral-300 px-4 py-3">
+          <span className="font-semibold">メニュー</span>
+        </div>
+
+        <nav className="p-4">
+          <ul className="space-y-2">
+            {SIDEBAR_ITEMS.map((item: SidebarItem) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="block rounded-md px-3 py-2 text-sm font-semibold hover:bg-neutral-200"
+                onClick={onClose}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </ul>
+        </nav>
+      </div>
     </aside>
   );
 }
