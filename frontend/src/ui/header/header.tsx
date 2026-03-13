@@ -4,10 +4,9 @@ import { Button } from '@/ui/button';
 type HeaderProps = {
   isAuthed: boolean;
   onToggleSidebar: () => void;
-  userName?: string;
-  email?: string;
-  positionName?: string;
-  roleName?: string;
+  userNameDisplay?: string;
+  emailDisplay?: string;
+  positionAndRoleNameDisplay?: string;
   isLoading?: boolean;
   onLogout?: () => void;
 };
@@ -15,10 +14,9 @@ type HeaderProps = {
 export function Header({
   isAuthed,
   onToggleSidebar,
-  userName,
-  email,
-  positionName,
-  roleName,
+  userNameDisplay,
+  emailDisplay,
+  positionAndRoleNameDisplay,
   isLoading,
   onLogout,
 }: HeaderProps) {
@@ -48,11 +46,9 @@ export function Header({
           <div className="flex items-center gap-2">
             {isAuthed && !isLoading && (
               <div className="text-sm text-right">
-                <div className="font-semibold">`ログインユーザー: ${userName}`</div>
-                <div>`メールアドレス: ${email}`</div>
-                <div>
-                  `役職 / 権限: ${positionName} / ${roleName} `
-                </div>
+                <div className="font-semibold">{userNameDisplay}</div>
+                <div>{emailDisplay}</div>
+                <div>{positionAndRoleNameDisplay}</div>
               </div>
             )}
 

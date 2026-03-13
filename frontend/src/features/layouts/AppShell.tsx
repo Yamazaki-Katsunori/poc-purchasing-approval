@@ -10,20 +10,33 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const { isOpen, toggle, close } = useSidebar();
 
   const { data: currentUser, isLoading, isError } = useCurrentUser();
-  const isAuthed = !!currentUser && !isError;
   const { handleLogout } = useLogout();
+
+  const isAuthed = !!currentUser && !isError;
+
+  const onLogout = async () => {
+    close();
+    await handleLogout();
+  };
+
+  // NOTE: ログインユーザー情報表示用
+  const userNameDisplay = currentUser?.name ? `ログインユーザー:${currentUser.name}` : '';
+  const emailDisplay = currentUser?.email ? `メールアドレス: ${currentUser.email}` : '';
+  const positionAndRoleNameDisplay =
+    currentUser?.positionName && currentUser?.roleName
+      ? `役職 / 権限: ${currentUser.positionName} / ${currentUser.roleName}`
+      : '';
 
   return (
     <div className="min-h-dvh">
       <Header
         isAuthed={isAuthed}
         onToggleSidebar={toggle}
-        userName={currentUser?.name ?? ''}
-        email={currentUser?.email ?? ''}
-        positionName={currentUser?.positionName ?? ''}
-        roleName={currentUser?.roleName ?? ''}
+        userNameDisplay={userNameDisplay}
+        emailDisplay={emailDisplay}
+        positionAndRoleNameDisplay={positionAndRoleNameDisplay}
         isLoading={isLoading}
-        onLogout={handleLogout}
+        onLogout={onLogout}
       />
 
       {/* ✅ Main は常に中央 */}
