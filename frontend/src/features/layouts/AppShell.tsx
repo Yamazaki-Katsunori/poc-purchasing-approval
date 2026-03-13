@@ -12,6 +12,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const { data: currentUser, isLoading, isError } = useCurrentUser();
   const { handleLogout } = useLogout();
 
+  console.log('%o', currentUser);
+
   const isAuthed = !!currentUser && !isError;
 
   const onLogout = async () => {
