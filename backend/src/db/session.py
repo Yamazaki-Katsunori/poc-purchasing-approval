@@ -4,6 +4,7 @@ from typing import Final
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
+from wireup import injectable
 
 DATABASE_URL: Final[str] = os.getenv("DATABASE_URL", "postgresql+psycopg://app:app@db:5432/app")
 
@@ -21,9 +22,15 @@ SessionLocal = sessionmaker(
 )
 
 
-def get_db() -> Generator[Session]:
-    db = SessionLocal()
-    try:
+def _session_scope() -> Generator[Session]:
+    with SessionLocal() as db:
         yield db
-    finally:
-        db.close()
+
+
+def get_db() -> Generator[Session]:
+    yield from _session_scope()
+
+
+@injectable(lifetime="scoped")
+def make_db_session() -> Generator[Session]:
+    yield from _session_scope()
