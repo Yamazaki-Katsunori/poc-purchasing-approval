@@ -21,10 +21,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   if (!isOpen) return null;
 
   return (
-    <aside className="fixed left-0 bottom-0 top-14 z-50 w-72 border-r-2 border-neutral-300 bg-paper">
+    <aside className="fixed left-0 bottom-0 top-18 z-50 w-72 border-r-2 border-neutral-300 bg-paper">
       {/* サイドバー本体 */}
-      <div className="fixed left-0 top-14 z-50 h-[calc(100dvh-3.5rem)] w-72 border-r-2 border-neutral-300 bg-paper">
-        <div className="flex items-center justify-between border-b-2 border-neutral-300 px-4 py-3">
+      <div className="fixed left-0 top-18 z-50 h-[calc(100dvh-3.5rem)] w-72 border-r-2 border-neutral-300 bg-paper">
+        <div className="flex items-center justify-between border-b-2 border-neutral-300 px-3 py-4">
           <span className="font-semibold">メニュー</span>
         </div>
 
