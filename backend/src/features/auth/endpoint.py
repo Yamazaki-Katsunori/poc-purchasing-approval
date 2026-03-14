@@ -13,6 +13,17 @@ def login(
     request: LoginRequest,
     response: Response,
 ) -> LoginResponse:
+    """ログイン認証エンドポイント
+
+    Args:
+       auth_service: ログイン認証用のサービスクラス
+       request: ログイン用リクエスト | email / password の受け取り
+       response: cookie にアクセストークンをセットする用
+
+    Returns:
+       LoginResponse: ログイン結果のレスポンス
+    """
+
     access_token, user = auth_service.login_user(request.email, request.password)
 
     response.set_cookie(
@@ -37,6 +48,15 @@ def login(
 
 @router.post("/logout", response_model=LogoutResponse)
 def logout(response: Response) -> LogoutResponse:
+    """ログアウトエンドポイント
+
+    Args:
+       response: cokkie 削除用
+
+    Returns:
+        LoginResponse: ログアウト結果
+
+    """
     response.delete_cookie(
         key="access_token",
         path="/",
@@ -49,6 +69,19 @@ def me(
     auth_service: Injected[AuthService],
     access_token: str | None = Cookie(default=None),
 ) -> MeResponse:
+    """認証中のユーザーを取得するエンドポイント
+
+    Args:
+      auth_service: ログイン認証用のサービスクラス
+      access_token: 認証で利用しているアクセストークン
+
+    Returns:
+      MeResponse: 認証中のユーザー情報を返却
+
+    Raises:
+      HTTPException: アクセストークンが存在いない場合 (HTTP_401_UNAUTHORIZED)
+    """
+
     if access_token is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
 
@@ -58,6 +91,6 @@ def me(
         id=user.id,
         name=user.name,
         email=user.email,
-        position_name=getattr(user, "position_name", None),
-        role_name=getattr(user, "role_name", None),
+        position_name=user.position.name if user.position else None,
+        role_name="|".join(role.name for role in user.roles),
     )

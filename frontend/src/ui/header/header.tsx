@@ -22,7 +22,7 @@ export function Header({
 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-60 border-b-2 border-neutral-300 bg-paper/80 backdrop-blur">
-      <div className="relative h-14">
+      <div className="relative h-18">
         {/* ハンバーガー：左端寄せ */}
         {isAuthed && (
           <Button
@@ -35,7 +35,7 @@ export function Header({
         )}
 
         {/* 中央コンテナ */}
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-8">
+        <div className="mx-auto flex h-18 max-w-6xl items-center justify-between px-8">
           {/* 左：ロゴ（ハンバーガーと被らないように余白） */}
           <div className="flex items-center gap-2 pl-10">
             <div className="h-8 w-8 rounded-md bg-brand-700" aria-hidden />
@@ -43,7 +43,7 @@ export function Header({
           </div>
 
           {/* 右：ログインユーザー情報 ログアウトボタン */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             {isAuthed && !isLoading && (
               <div className="text-sm text-right">
                 <div className="font-semibold">{userNameDisplay}</div>
@@ -53,9 +53,11 @@ export function Header({
             )}
 
             {isAuthed && (
-              <button className="ui-btn ui-btn--secondary ui-btn--sm" type="button" onClick={onLogout}>
-                ログアウト
-              </button>
+              <div className="flex items-center justify-end-safe">
+                <button className="ui-btn ui-btn--secondary ui-btn--sm" type="button" onClick={onLogout}>
+                  ログアウト
+                </button>
+              </div>
             )}
           </div>
         </div>

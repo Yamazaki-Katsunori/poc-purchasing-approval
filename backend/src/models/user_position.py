@@ -9,6 +9,8 @@ from src.db.base import Base
 
 
 class UserPosition(Base):
+    """user_positionsテーブルのモデルクラス"""
+
     __tablename__ = "user_positions"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)

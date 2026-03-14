@@ -1,7 +1,7 @@
 'use client';
 
 import { logoutApi } from '@/features/api/logout';
-import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { CURRENT_USER_QUERY_KEY } from './useCurrentUser';
 
@@ -16,7 +16,7 @@ export const useLogout = () => {
     // 即時に未ログイン状態へ
     queryClient.setQueryData(CURRENT_USER_QUERY_KEY, null);
 
-    // 必要なら関連queryも再検証
+    // 関連queryも再検証
     await queryClient.invalidateQueries({ queryKey: CURRENT_USER_QUERY_KEY });
     router.push('/login');
     router.refresh();

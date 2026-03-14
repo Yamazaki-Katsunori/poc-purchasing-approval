@@ -2,6 +2,8 @@ from pydantic import BaseModel, EmailStr, Field
 
 
 class LoginRequest(BaseModel):
+    """ログイン認証リクエストスキーマ"""
+
     email: EmailStr = Field(
         description="ログイン用メールアドレス",
         examples=["test@example.com"],
@@ -10,21 +12,29 @@ class LoginRequest(BaseModel):
 
 
 class LoginUserResponse(BaseModel):
+    """ログイン認証レスポンススキーマに含めるログインユーザースキーマ"""
+
     id: int
     name: str
     email: EmailStr
 
 
 class LoginResponse(BaseModel):
+    """ログイン認証レスポンススキーマ"""
+
     token_type: str
     user: LoginUserResponse
 
 
 class LogoutResponse(BaseModel):
+    """ログアウトレスポンススキーマ"""
+
     message: str
 
 
 class MeResponse(BaseModel):
+    """認証確認レスポンススキーマ"""
+
     id: int
     name: str
     email: EmailStr

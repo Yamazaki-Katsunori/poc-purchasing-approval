@@ -10,6 +10,8 @@ from src.db.base import Base
 
 
 class UserRole(Base):
+    """user_rolesテーブルのモデルクラス"""
+
     __tablename__ = "user_roles"
 
     user_id: Mapped[int] = mapped_column(

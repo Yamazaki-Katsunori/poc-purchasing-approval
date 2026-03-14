@@ -4,6 +4,8 @@ from src.models.user import User
 
 
 class IUserRepository(ABC):
+    """UserRepositoryのインターフェース"""
+
     @abstractmethod
     def find_by_email(self, email: str) -> User | None:
         raise NotImplementedError

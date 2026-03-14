@@ -23,14 +23,32 @@ SessionLocal = sessionmaker(
 
 
 def _session_scope() -> Generator[Session]:
+    """databaseのセッション生成処理
+
+    Returns:
+      Generator[Session]: yield db
+
+    """
     with SessionLocal() as db:
         yield db
 
 
 def get_db() -> Generator[Session]:
+    """db_sessionの生成処理
+
+    Returns:
+      Generator[Session] : yield form _session_scope()
+
+    """
     yield from _session_scope()
 
 
 @injectable(lifetime="scoped")
 def make_db_session() -> Generator[Session]:
+    """db_sessionの生成処理
+
+    Returns:
+      Generator[Session] : yield form _session_scope()
+
+    """
     yield from _session_scope()

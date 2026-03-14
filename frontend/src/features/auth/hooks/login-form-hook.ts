@@ -24,16 +24,13 @@ export const useLoginForm = () => {
   const loginMutaion = useLoginMutation();
 
   const onSubmit: SubmitHandler<LoginValueTypes> = async (data) => {
-    const result = await loginMutaion.mutateAsync(data);
+    await loginMutaion.mutateAsync(data);
 
-    console.debug(result);
-
+    // 関連queryを再検証
     await queryClient.invalidateQueries({ queryKey: CURRENT_USER_QUERY_KEY });
 
     router.push('/');
     router.refresh();
-
-    console.log(`document.cookie: ${document.cookie}`);
   };
 
   return {
