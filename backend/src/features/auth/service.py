@@ -8,10 +8,24 @@ from src.shared.security import create_access_token, decode_access_token, verify
 
 @injectable(lifetime="scoped")
 class AuthService:
+    """認証関連のビジネスロジックを提供するサービスクラス"""
+
     def __init__(self, user_repository: IUserRepository) -> None:
         self.user_repository = user_repository
 
     def login_user(self, email: str, password: str) -> tuple[str, User]:
+        """ユーザー認証を行い、JWTを発行する。
+
+        Args:
+            email: ログイン用メールアドレス
+            password: 平文パスワード
+
+        Returns:
+            tuple[str,User]: 発行した JWTトークン と ユーザー情報
+
+        Raises:
+            HTTPException: 認証に失敗した場合 (HTTP_401_UNAUTHORIZED)
+        """
 
         user = self.user_repository.find_by_email(email)
 
@@ -31,6 +45,18 @@ class AuthService:
         return access_token, user
 
     def get_me(self, access_token: str) -> User:
+        """認証中のユーザーを取得
+
+        Args:
+            access_token: Cookieに保存しているアクセストークン
+
+        Returns:
+            User: アクセストークンのユーザーIDに該当するユーザー情報
+
+        Raises:
+            HTTPException: 認証中のユーザーが存在しない場合 (HTTP_401_UNAUTHORIZED)
+
+        """
         payload = decode_access_token(access_token)
 
         if payload is None:
@@ -51,8 +77,6 @@ class AuthService:
             )
 
         user = self.user_repository.find_by_id(int(user_id))
-
-        print(f"user : {user}")
 
         if user is None:
             raise HTTPException(

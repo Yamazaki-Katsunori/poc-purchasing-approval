@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 
 
 class PurchasingApprovalEvent(Base):
+    """purchasing_approval_eventテーブルのモデルクラス"""
+
     __tablename__ = "purchasing_approval_events"
     __table_args__ = (CheckConstraint("subject_type IN ('approval', 'draft')", name="chk_event_subject_type"),)
 

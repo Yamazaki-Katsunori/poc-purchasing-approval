@@ -14,18 +14,44 @@ ACCESS_TOKEN_EXPIRE_MINUTES: Final[int] = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE
 
 
 def get_password_hash(password: str) -> str:
+    """ハッシュ化したパスワードを取得する
+
+    Args:
+       password: 平文パスワード
+
+    Returns:
+       str: ハッシュ化したパスワード
+    """
     return cast(str, pwd_context.hash(password))
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """平文パスワードを元にハッシュ化したパスワードを検証
+
+    Args:
+       plain_password: 平文パスワード
+       hashed_password: ハッシュ済みパスワード
+
+    Returns:
+       bool: 検証結果
+    """
     return cast(bool, pwd_context.verify(plain_password, hashed_password))
 
 
 def hash_password(password: str) -> str:
+    """get_password_hashと同じなため整理"""
     return cast(str, pwd_context.hash(password))
 
 
 def create_access_token(subject: str) -> str:
+    """JWTアクセストークン発行処理
+
+    Args:
+       subject: アクセストークンに含める件名
+
+    Returns:
+       str: アクセストークン
+    """
     expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     payload = {
         "sub": subject,
@@ -35,9 +61,22 @@ def create_access_token(subject: str) -> str:
 
 
 def decode_access_token(access_token: str) -> dict:
+    """発行したJWTアクセストークンのデコード処理
+
+    Args:
+       access_token: 発行したJWTアクセストークン
+       SECRET_KEY: JWTのシークレットキー
+       algorithm: JWTの署名アルゴリズム
+
+    Returns:
+       dict: デコードした情報
+
+    Raises:
+       HTTPException: 無効なトークンの場合 (HTTP_401_UNAUTHORIZED)
+    """
     try:
         payload = jwt.decode(access_token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
+        return cast("dict", payload)
     except JWTError as exc:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

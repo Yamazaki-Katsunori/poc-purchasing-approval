@@ -12,8 +12,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const { data: currentUser, isLoading, isError } = useCurrentUser();
   const { handleLogout } = useLogout();
 
-  console.log('%o', currentUser);
-
+  // NOTE: JWT 認証中か確認する isAuthed
   const isAuthed = !!currentUser && !isError;
 
   const onLogout = async () => {
@@ -25,8 +24,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const userNameDisplay = currentUser?.name ? `ログインユーザー:${currentUser.name}` : '';
   const emailDisplay = currentUser?.email ? `メールアドレス: ${currentUser.email}` : '';
   const positionAndRoleNameDisplay =
-    currentUser?.positionName && currentUser?.roleName
-      ? `役職 / 権限: ${currentUser.positionName} / ${currentUser.roleName}`
+    currentUser?.position_name && currentUser?.role_name
+      ? `役職 / 権限: ${currentUser.position_name} / ${currentUser.role_name}`
       : '';
 
   return (

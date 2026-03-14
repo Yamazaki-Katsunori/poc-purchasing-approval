@@ -6,8 +6,8 @@ export type CurrentUser = {
   id: number;
   name: string;
   email: string;
-  positionName: string | null;
-  roleName: string | null;
+  position_name: string | null;
+  role_name: string | null;
 };
 
 export const getCurrentUser = async (): Promise<CurrentUser> => {

@@ -9,6 +9,8 @@ from src.db.base import Base
 
 
 class PurchasingApprovalStatus(Base):
+    """purchasing_approval_statusesテーブルのモデルクラス"""
+
     __tablename__ = "purchasing_approval_statuses"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
