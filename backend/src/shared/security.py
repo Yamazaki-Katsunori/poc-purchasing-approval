@@ -38,11 +38,6 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return cast(bool, pwd_context.verify(plain_password, hashed_password))
 
 
-def hash_password(password: str) -> str:
-    """get_password_hashと同じなため整理"""
-    return cast(str, pwd_context.hash(password))
-
-
 def create_access_token(subject: str) -> str:
     """JWTアクセストークン発行処理
 
