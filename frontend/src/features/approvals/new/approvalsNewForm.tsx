@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { ApprovalsNewFormSchema, ApprovalsNewFormTypes } from './schemas/approvals-new-schema';
 import { useApprovalButton } from './hooks/action-approval-button';
-import { formatNumberWithComma, normalizeNumberInput } from '@/shared/numberInput';
+import { formatNumberWithComma, normalizeNumberInput } from '@/shared/numberInputs/numberInput';
 import { useState } from 'react';
 
 export function ApprovalsNewForm() {

@@ -36,7 +36,7 @@ export const useLoginForm = () => {
   return {
     ...form,
     onSubmit,
-    isPendng: loginMutaion.isPending,
+    isPending: loginMutaion.isPending,
     serverError: loginMutaion.error?.message ?? null,
   };
 };
