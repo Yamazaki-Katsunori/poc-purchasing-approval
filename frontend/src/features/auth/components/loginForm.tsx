@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle, Input } from '@/ui';
-import { useLoginForm } from './hooks/login-form-hook';
+import { useLoginForm } from '../hooks/login-form-hook';
 
 export function LoginForm() {
   const {
@@ -9,7 +9,7 @@ export function LoginForm() {
     handleSubmit,
     formState: { errors, isSubmitted },
     onSubmit,
-    isPendng,
+    isPending,
     serverError,
   } = useLoginForm();
 
@@ -48,8 +48,8 @@ export function LoginForm() {
           {serverError && <p className="p-2 text-red-500">{serverError}</p>}
         </CardContent>
         <CardFooter className="flex justify-end-safe">
-          <Button type="submit" className="" variant="primary" disabled={isPendng}>
-            {isPendng ? 'ログイン中...' : 'ログイン'}
+          <Button type="submit" className="" variant="primary" disabled={isPending}>
+            {isPending ? 'ログイン中...' : 'ログイン'}
           </Button>
         </CardFooter>
       </Card>

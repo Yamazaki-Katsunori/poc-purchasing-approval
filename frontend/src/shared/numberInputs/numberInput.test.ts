@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatNumberWithComma, normalizeNumberInput } from '@/shared/numberInput';
+import { formatNumberWithComma, normalizeNumberInput } from '@/shared/numberInputs/numberInput';
 
 describe('normalizeNumberInput', () => {
   it('カンマを除去する', () => {
