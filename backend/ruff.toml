@@ -17,9 +17,13 @@ select = ["E", "F", "I", "UP", "B"]
 ignore = [
   "E501", # line-length は formatter に寄せるなら無効化でOK
 ]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [lint.isort]
-known-first-party = ["app"] # あなたのパッケージ名に合わせて変更（例: "backend", "src" など）
+known-first-party = [
+  "backend",
+  "src",
+] # あなたのパッケージ名に合わせて変更（例: "backend", "src" など）
 combine-as-imports = true
 
 [format]
@@ -29,7 +33,7 @@ line-ending = "auto"
 
 [lint.per-file-ignores]
 # テストは未使用 import や assert などが出がちなので緩める（必要なら）
-"tests/**.py" = ["F401"]
+"tests/**/*.py" = ["F401", "D", "S101"]
 
 [lint.flake8-bugbear]
 # Allow default arguments like, e.g., `data: List[str] = fastapi.Query(None)`.

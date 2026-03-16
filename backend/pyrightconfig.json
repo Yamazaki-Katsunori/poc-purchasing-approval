@@ -13,5 +13,7 @@
 
   "typeCheckingMode": "basic",
   "reportMissingImports": true,
-  "reportMissingTypeStubs": false
+  "reportMissingTypeStubs": false,
+  "reportUnusedFunction": false,
+  "reportUnusedVariable": false
 }
