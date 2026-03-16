@@ -59,16 +59,7 @@ class AuthService:
         """
         payload = decode_access_token(access_token)
 
-        if payload is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token",
-            )
-
         user_id = payload.get("sub")
-
-        print(f"user_id {user_id}")
-        print(f"user_id type: {type(user_id)}")
 
         if user_id is None:
             raise HTTPException(
