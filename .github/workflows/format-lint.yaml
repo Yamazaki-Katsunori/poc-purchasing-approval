@@ -1,4 +1,4 @@
-name: ci
+name: format-lint
 
 on:
   push:
@@ -6,12 +6,12 @@ on:
   pull_request:
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: format-lint-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   backend:
-    name: backend (ruff/mypy/pyright/pytest)
+    name: backend (ruff/mypy/pyright)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -43,15 +43,6 @@ jobs:
 
       - name: Pyright
         run: uv run pyright
-
-      - name: Pytest
-        run: |
-          uv run pytest -q || code=$?
-          if [ "${code:-0}" -eq 5 ]; then
-            echo "No tests collected. Skipping."
-            exit 0
-          fi
-          exit "${code:-0}"
 
   frontend:
     name: frontend (prettier/eslint)
