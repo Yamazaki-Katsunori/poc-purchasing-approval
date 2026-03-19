@@ -8,6 +8,7 @@ from src.shared.security import (
     create_access_token,
     decode_access_token,
     get_password_hash,
+    verify_csrf,
     verify_password,
 )
 
@@ -81,3 +82,47 @@ def test_decode_access_token_raises_http_exception_when_token_is_invalid() -> No
 
     assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
     assert exc_info.value.detail == "Invalid token"
+
+
+def test_verify_csrf_success() -> None:
+    """CSRF検証が成功すること"""
+    verify_csrf(
+        csrf_cookie="test-csrf-token",
+        csrf_header="test-csrf-token",
+    )
+
+
+def test_verify_csrf_raises_when_cookie_is_none() -> None:
+    """CSRF検証時にクッキーが存在せずHTTPException(403)を送出すること"""
+    with pytest.raises(HTTPException) as exc_info:
+        verify_csrf(
+            csrf_cookie=None,
+            csrf_header="test-csrf-token",
+        )
+
+    assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
+    assert exc_info.value.detail == "CSRF validation failed"
+
+
+def test_verify_csrf_raises_when_header_is_none() -> None:
+    """CSRF検証時にクッキーが存在せずHTTPException(403)を送出すること"""
+    with pytest.raises(HTTPException) as exc_info:
+        verify_csrf(
+            csrf_cookie="test-csrf-token",
+            csrf_header=None,
+        )
+
+    assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
+    assert exc_info.value.detail == "CSRF validation failed"
+
+
+def test_verify_csrf_raises_when_cookie_and_header_do_not_match() -> None:
+    """CSRF検証時にクッキーとヘッダーが一致しない場合HTTPException(403)を送出すること"""
+    with pytest.raises(HTTPException) as exc_info:
+        verify_csrf(
+            csrf_cookie="cookie-token",
+            csrf_header="header-token",
+        )
+
+    assert exc_info.value.status_code == status.HTTP_403_FORBIDDEN
+    assert exc_info.value.detail == "CSRF validation failed"

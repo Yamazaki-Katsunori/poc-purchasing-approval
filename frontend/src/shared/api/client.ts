@@ -1,3 +1,5 @@
+import { getCookie } from '../cookie';
+
 type HttpMethodType = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 type ApiClientOptions = {
@@ -22,14 +24,24 @@ export class ApiError extends Error {
 export const apiClient = async <TResponse>(path: string, options: ApiClientOptions = {}): Promise<TResponse> => {
   const { method = 'GET', body, headers, credentials, cache, signal } = options;
 
+  const newHeaders = new Headers(headers);
+
+  if (body !== undefined) {
+    newHeaders.set('Content-Type', 'application/json');
+  }
+
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+    const csrfToken = getCookie('csrf_token');
+    if (csrfToken) {
+      newHeaders.set('X-CSRF-Token', csrfToken);
+    }
+  }
+
   const response = await fetch(`/api${path}`, {
     method,
-    headers: {
-      'Content-Type': 'application/json',
-      ...headers,
-    },
+    headers: newHeaders,
     body: body !== undefined ? JSON.stringify(body) : undefined,
-    credentials,
+    credentials: credentials ?? 'include',
     cache,
     signal,
   });

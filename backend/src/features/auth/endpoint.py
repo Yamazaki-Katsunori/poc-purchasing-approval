@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Cookie, HTTPException, Response, status
+from secrets import token_urlsafe
+
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
 from wireup import Injected
 
 from src.features.auth.schemas import LoginRequest, LoginResponse, LoginUserResponse, LogoutResponse, MeResponse
 from src.features.auth.service import AuthService
+from src.shared.security import verify_csrf
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -23,8 +26,9 @@ def login(
     Returns:
        LoginResponse: ログイン結果のレスポンス
     """
-
     access_token, user = auth_service.login_user(request.email, request.password)
+
+    csrf_token = token_urlsafe(32)
 
     response.set_cookie(
         key="access_token",
@@ -34,6 +38,15 @@ def login(
         samesite="lax",
         path="/",
         max_age=60 * 60,
+    )
+
+    response.set_cookie(
+        key="csrf_token",
+        value=csrf_token,
+        httponly=False,
+        secure=False,
+        samesite="lax",
+        path="/",
     )
 
     return LoginResponse(
@@ -46,7 +59,7 @@ def login(
     )
 
 
-@router.post("/logout", response_model=LogoutResponse)
+@router.post("/logout", response_model=LogoutResponse, dependencies=[Depends(verify_csrf)])
 def logout(response: Response) -> LogoutResponse:
     """ログアウトエンドポイント
 
@@ -57,8 +70,14 @@ def logout(response: Response) -> LogoutResponse:
         LoginResponse: ログアウト結果
 
     """
+
     response.delete_cookie(
         key="access_token",
+        path="/",
+    )
+
+    response.delete_cookie(
+        key="csrf_token",
         path="/",
     )
     return LogoutResponse(message="logged out")
