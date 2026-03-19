@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
 
-  allowedDevOrigins: ['127.0.0.1'],
+  allowedDevOrigins: ['web', 'localhost'],
 };
 
 export default nextConfig;
