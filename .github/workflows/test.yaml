@@ -13,9 +13,33 @@ jobs:
   backend:
     name: backend (pytest)
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: app
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U app -d app"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      DATABASE_NAME: app
+      DATABASE_USER: app
+      DATABASE_PASSWORD: app
+
     defaults:
       run:
         working-directory: backend
+
     steps:
       - uses: actions/checkout@v4
 
@@ -31,6 +55,12 @@ jobs:
 
       - name: Install deps
         run: uv sync --dev
+
+      - name: Run migrations
+        run: uv run alembic upgrade head
+
+      - name: Seed data
+        run: uv run python -m src.scripts.seeds.run_all_seeds
 
       - name: Pytest
         run: |
