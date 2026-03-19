@@ -2,7 +2,7 @@ import os
 from datetime import UTC, datetime, timedelta
 from typing import Final, cast
 
-from fastapi import HTTPException, status
+from fastapi import Cookie, Header, HTTPException, status
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
@@ -77,3 +77,23 @@ def decode_access_token(access_token: str) -> dict:
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token",
         ) from exc
+
+
+def verify_csrf(
+    csrf_cookie: str | None = Cookie(default=None, alias="csrf_token"),
+    csrf_header: str | None = Header(default=None, alias="X-CSRF-Token"),
+) -> None:
+    """CSRFトークンの検証処理
+
+    Args:
+       csrf_cookie: 送られてきたCSRFトークン
+       csrf_header: 送られてきたCSRFトークン
+
+    Returns:
+       None: 検証で問題なければNone
+
+    Raises:
+       HTTPException: 検証で問題が起きれば HTTP_403_FORBIDDEN
+    """
+    if not csrf_cookie or not csrf_header or csrf_cookie != csrf_header:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="CSRF validation failed")

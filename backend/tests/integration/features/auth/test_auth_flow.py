@@ -26,7 +26,13 @@ def test_auth_flow_login_me_logout(client: TestClient) -> None:
     assert me_body["email"] == "applicant@example.com"
     assert "role_name" in me_body
 
-    logout_response = client.post("/auth/logout")
+    csrf_token = client.cookies.get("csrf_token")
+    assert csrf_token is not None
+
+    logout_response = client.post(
+        "/auth/logout",
+        headers={"X-CSRF-Token": csrf_token},
+    )
     assert logout_response.status_code == status.HTTP_200_OK
     assert logout_response.json() == {"message": "logged out"}
 
@@ -89,7 +95,13 @@ def test_me_returns_401_after_logout(client: TestClient) -> None:
     login_response = client.post("/auth/login", json=login_payload)
     assert login_response.status_code == status.HTTP_200_OK
 
-    logout_response = client.post("/auth/logout")
+    csrf_token = client.cookies.get("csrf_token")
+    assert csrf_token is not None
+
+    logout_response = client.post(
+        "/auth/logout",
+        headers={"X-CSRF-Token": csrf_token},
+    )
     assert logout_response.status_code == status.HTTP_200_OK
 
     me_response = client.get("/auth/me")
