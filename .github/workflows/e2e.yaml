@@ -43,7 +43,7 @@ jobs:
         run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci up -d --build
 
       - name: Show container status
-        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci ps -a
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci ps
 
       - name: Wait for app
         working-directory: .
