@@ -4,6 +4,9 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { LoginSchema, LoginValueTypes } from '../schemas/login-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useLoginMutation } from './login-mutation';
+import { useQueryClient } from '@tanstack/react-query';
+import { CURRENT_USER_QUERY_KEY } from '@/features/layouts/hooks/useCurrentUser';
 
 export const useLoginForm = () => {
   const form = useForm<LoginValueTypes>({
@@ -17,16 +20,23 @@ export const useLoginForm = () => {
   });
 
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const loginMutaion = useLoginMutation();
+
   const onSubmit: SubmitHandler<LoginValueTypes> = async (data) => {
-    document.cookie = 'mock_token=dummy-token; path=/';
+    await loginMutaion.mutateAsync(data);
+
+    // 関連queryを再検証
+    await queryClient.invalidateQueries({ queryKey: CURRENT_USER_QUERY_KEY });
+
     router.push('/');
     router.refresh();
-
-    console.log(`document.cookie: ${document.cookie}`);
   };
 
   return {
     ...form,
     onSubmit,
+    isPending: loginMutaion.isPending,
+    serverError: loginMutaion.error?.message ?? null,
   };
 };

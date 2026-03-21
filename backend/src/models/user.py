@@ -11,10 +11,13 @@ from src.db.base import Base
 if TYPE_CHECKING:
     from src.models.draft_purchasing_approval import DraftPurchasingApproval
     from src.models.purchasing_approval import PurchasingApproval
+    from src.models.role import Role
     from src.models.user_position import UserPosition
 
 
 class User(Base):
+    """usersテーブルのモデルクラス"""
+
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
@@ -37,6 +40,7 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=text("NOW()"))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=text("NOW()"))
 
+    roles: Mapped[list[Role]] = relationship("Role", secondary="user_roles", back_populates="users", lazy="selectin")
     position: Mapped[UserPosition | None] = relationship(back_populates="users", lazy="joined")
     approvals: Mapped[list[PurchasingApproval]] = relationship(back_populates="user", lazy="selectin")
     draft_approvals: Mapped[list[DraftPurchasingApproval]] = relationship(back_populates="user", lazy="selectin")

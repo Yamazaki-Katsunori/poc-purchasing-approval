@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 
 
 class PurchasingApprovalComment(Base):
+    """purchasing_approval_commentsテーブルのモデルクラス"""
+
     __tablename__ = "purchasing_approval_comments"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, comment="申請コメントID")

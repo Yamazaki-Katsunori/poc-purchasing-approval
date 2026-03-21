@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle, Input } from '@/ui';
-import { useLoginForm } from './hooks/login-form-hook';
+import { useLoginForm } from '../hooks/login-form-hook';
 
 export function LoginForm() {
   const {
@@ -9,6 +9,8 @@ export function LoginForm() {
     handleSubmit,
     formState: { errors, isSubmitted },
     onSubmit,
+    isPending,
+    serverError,
   } = useLoginForm();
 
   return (
@@ -22,18 +24,32 @@ export function LoginForm() {
           <div className="p-2">
             <label htmlFor="email">メールアドレス:</label>
             <span> {isSubmitted && errors.email && <p className="text-red-500">{errors.email.message}</p>}</span>
-            <Input id="email" type="email" placeholder="メールアドレスを入力してください" {...register('email')} />
+            <Input
+              id="email"
+              type="email"
+              placeholder="メールアドレスを入力してください"
+              autoComplete="off"
+              {...register('email')}
+            />
           </div>
 
           <div className="p-2">
             <label htmlFor="password">パスワード:</label>
             <span> {isSubmitted && errors.password && <p className="text-red-500">{errors.password.message}</p>}</span>
-            <Input id="password" type="password" placeholder="パスワードを入力してください" {...register('password')} />
+            <Input
+              id="password"
+              type="password"
+              placeholder="パスワードを入力してください"
+              autoComplete="off"
+              {...register('password')}
+            />
           </div>
+
+          {serverError && <p className="p-2 text-red-500">{serverError}</p>}
         </CardContent>
         <CardFooter className="flex justify-end-safe">
-          <Button type="submit" className="" variant="primary">
-            ログイン
+          <Button type="submit" className="" variant="primary" disabled={isPending}>
+            {isPending ? 'ログイン中...' : 'ログイン'}
           </Button>
         </CardFooter>
       </Card>

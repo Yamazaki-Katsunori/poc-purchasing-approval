@@ -1,0 +1,77 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: backend (pytest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start containers
+        run: docker compose -f compose.ci.be.yaml --env-file .env.ci up -d --build
+
+      - name: Show container status
+        run: docker compose -f compose.ci.be.yaml --env-file .env.ci ps -a
+
+      - name: Run migrations
+        run: docker compose -f compose.ci.be.yaml --env-file .env.ci exec -T backend uv run alembic upgrade head
+
+      - name: Seed data
+        run: docker compose -f compose.ci.be.yaml --env-file .env.ci exec -T backend uv run python -m src.scripts.seeds.run_all_seeds
+
+      - name: Pytest
+        run: |
+          docker compose -f compose.ci.be.yaml --env-file .env.ci exec -T backend sh -c '
+            uv run pytest -q || code=$?
+            if [ "${code:-0}" -eq 5 ]; then
+              echo "No tests collected. Skipping."
+              exit 0
+            fi
+            exit "${code:-0}"
+          '
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose -f compose.ci.be.yaml --env-file .env.ci logs --no-color
+
+      - name: Stop containers
+        if: always()
+        run: docker compose -f compose.ci.be.yaml --env-file .env.ci down -v
+
+  frontend:
+    name: frontend (vitest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Vitest
+        run: pnpm test

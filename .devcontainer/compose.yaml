@@ -8,7 +8,10 @@ services:
       # - compose file is in .devcontainer/
       # - build context is ".devcontainer/" so Dockerfile path is relative to it
       context: .
-      dockerfile: ../docker/services/workspace/Dockerfile
+      dockerfile: ../docker/services/workspace/Dockerfile.dev
+
+    env_file:
+      - .env
 
     volumes:
       # Project root (repo)

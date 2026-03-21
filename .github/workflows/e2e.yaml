@@ -1,0 +1,75 @@
+name: e2e
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  playwright:
+    name: playwright e2e
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Start containers
+        working-directory: .
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci up -d --build
+
+      - name: Show container status
+        working-directory: .
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci ps -a
+
+      - name: Run migrations
+        working-directory: .
+        run: docker compose -f compose.ci.be.yaml --env-file .env.ci exec -T backend uv run alembic upgrade head
+
+      - name: Seed data
+        working-directory: .
+        run: docker compose -f compose.ci.be.yaml --env-file .env.ci exec -T backend uv run python -m src.scripts.seeds.run_all_seeds
+
+      - name: Wait for app
+        working-directory: .
+        run: |
+          until curl -fsS http://localhost:8080/login > /dev/null; do
+            sleep 2
+          done
+
+      - name: Run Playwright
+        run: pnpm test:e2e
+
+      - name: Show container logs on failure
+        if: failure()
+        working-directory: .
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci logs --no-color
+
+      - name: Stop containers
+        if: always()
+        working-directory: .
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci down -v

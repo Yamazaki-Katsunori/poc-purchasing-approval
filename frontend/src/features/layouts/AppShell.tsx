@@ -1,27 +1,43 @@
-// features/layouts/AppShell.tsx（要点だけ）
 'use client';
 
-import { useCallback, useState } from 'react';
 import { Header } from '@/ui/header';
 import { Sidebar } from '@/ui/sidebar';
 import { useLogout } from './hooks/logout-hook';
+import { useSidebar } from './hooks/useSidebar';
+import { useCurrentUser } from './hooks/useCurrentUser';
 
-export default function AppShell({ children, isAuthed }: { children: React.ReactNode; isAuthed: boolean }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const effectiveSidebarOpen = isAuthed && sidebarOpen;
+export default function AppShell({ children }: { children: React.ReactNode }) {
+  const { isOpen, toggle, close } = useSidebar();
 
-  const toggleSidebar = useCallback(() => setSidebarOpen((v) => !v), []);
-  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
-
+  const { data: currentUser, isLoading, isError } = useCurrentUser();
   const { handleLogout } = useLogout();
+
+  // NOTE: JWT 認証中か確認する isAuthed
+  const isAuthed = !!currentUser && !isError;
+
+  const onLogout = async () => {
+    close();
+    await handleLogout();
+  };
+
+  // NOTE: ログインユーザー情報表示用
+  const userNameDisplay = currentUser?.name ? `ログインユーザー:${currentUser.name}` : '';
+  const emailDisplay = currentUser?.email ? `メールアドレス: ${currentUser.email}` : '';
+  const positionAndRoleNameDisplay =
+    currentUser?.position_name && currentUser?.role_name
+      ? `役職 / 権限: ${currentUser.position_name} / ${currentUser.role_name}`
+      : '';
 
   return (
     <div className="min-h-dvh">
       <Header
         isAuthed={isAuthed}
-        sidebarOpen={effectiveSidebarOpen}
-        onToggleSidebar={toggleSidebar}
-        onLogout={handleLogout}
+        onToggleSidebar={toggle}
+        userNameDisplay={userNameDisplay}
+        emailDisplay={emailDisplay}
+        positionAndRoleNameDisplay={positionAndRoleNameDisplay}
+        isLoading={isLoading}
+        onLogout={onLogout}
       />
 
       {/* ✅ Main は常に中央 */}
@@ -34,11 +50,7 @@ export default function AppShell({ children, isAuthed }: { children: React.React
       </main>
 
       {/* ✅ Sidebar は fixed drawer（画面左端） */}
-      {isAuthed && effectiveSidebarOpen ? (
-        <aside className="fixed left-0 bottom-0 top-14 z-50 w-72 border-r-2 border-neutral-300 bg-[color:var(--color-paper)]">
-          <Sidebar onNavigate={closeSidebar} />
-        </aside>
-      ) : null}
+      {isAuthed ? <Sidebar isOpen={isOpen} onClose={close} /> : null}
     </div>
   );
 }
