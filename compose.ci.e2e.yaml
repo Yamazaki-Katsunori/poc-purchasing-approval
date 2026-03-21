@@ -47,6 +47,8 @@ services:
       dockerfile: docker/services/workspace/Dockerfile
       target: ci-frontend
     working_dir: /workspaces/app/frontend
+    env_file:
+      - .env.ci
     volumes:
       - .:/workspaces/app
     depends_on:

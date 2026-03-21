@@ -62,10 +62,10 @@ FROM ci-base AS ci-backend
 
 WORKDIR /workspaces/app/backend
 
-COPY backend/pyproject.toml backend/uv.lock backend/alembic.ini ./
+COPY --chown=${USERNAME}:${USERNAME} backend/pyproject.toml backend/uv.lock backend/alembic.ini ./
 RUN uv sync --dev
 
-COPY backend /workspaces/app/backend
+COPY --chown=${USERNAME}:${USERNAME} backend /workspaces/app/backend
 
 CMD ["uv", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
@@ -77,10 +77,10 @@ FROM ci-base AS ci-frontend
 
 WORKDIR /workspaces/app/frontend
 
-COPY frontend/package.json frontend/pnpm-lock.yaml ./
+COPY --chown=${USERNAME}:${USERNAME} frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
-COPY frontend /workspaces/app/frontend
+COPY --chown=${USERNAME}:${USERNAME} frontend /workspaces/app/frontend
 
 CMD ["pnpm", "dev"]
 
