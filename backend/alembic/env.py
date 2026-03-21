@@ -1,17 +1,15 @@
+import os
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from src.db.base import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-# database_url = os.getenv("DATABASE_URL")
-#
-# if database_url:
-#     config.set_main_option("sqlalchemy.url", database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -22,7 +20,31 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = Base.metadata
+
+
+def build_database_url() -> str:
+    db_user = os.getenv("DB_USERNAME", "app")
+    db_password = os.getenv("DB_PASSWORD", "app")
+    db_host = os.getenv("DB_HOST", "localhost")
+    db_port = os.getenv("DB_PORT", "5432")
+    db_name = os.getenv("DB_DATABASE", "app")
+    db_connection = os.getenv("DB_CONNECTION", "pgsql")
+
+    if db_connection != "pgsql":
+        raise RuntimeError(f"Unsupported DB_CONNECTION: {db_connection}")
+
+    return f"postgresql+psycopg://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+
+
+config.set_main_option("sqlalchemy.url", build_database_url())
+
+
+# database_url = os.getenv("DATABASE_URL")
+#
+# if database_url:
+#     config.set_main_option("sqlalchemy.url", database_url)
+
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -47,6 +69,7 @@ def run_migrations_offline() -> None:
         url=url,
         target_metadata=target_metadata,
         literal_binds=True,
+        compare_type=True,
         dialect_opts={"paramstyle": "named"},
     )
 
