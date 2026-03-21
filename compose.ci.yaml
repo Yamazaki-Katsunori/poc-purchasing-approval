@@ -39,6 +39,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    command: sleep infinity
 
   frontend:
     build:
@@ -50,6 +51,7 @@ services:
       - .:/workspaces/app
     depends_on:
       - backend
+    command: sleep infinity
 
   web:
     image: nginx:stable
