@@ -32,11 +32,11 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: frontend/pnpm-lock.yaml
 
-      - name: Install deps
-        run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+      # - name: Install deps
+      #   run: pnpm install --frozen-lockfile
+      #
+      # - name: Install Playwright browsers
+      #   run: pnpm exec playwright install --with-deps chromium
 
       - name: Start containers
         working-directory: .
