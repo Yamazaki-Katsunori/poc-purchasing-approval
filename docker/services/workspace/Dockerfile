@@ -39,9 +39,9 @@ WORKDIR /workspaces/app
 
 
 # =============================================================================
-# ci: GitHub Actions / compose.ci.yaml 用
+# ci-base: GitHub Actions / compose.ci.yaml の共通土台
 # =============================================================================
-FROM base AS ci
+FROM base AS ci-base
 
 RUN set -e; \
   curl -fsSL https://deb.nodesource.com/setup_24.x | bash -; \
@@ -54,7 +54,35 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 USER $USERNAME
 
-CMD ["sleep", "infinity"]
+
+# =============================================================================
+# ci-backend: backend test / app 起動用
+# =============================================================================
+FROM ci-base AS ci-backend
+
+WORKDIR /workspaces/app/backend
+
+COPY backend/pyproject.toml backend/uv.lock ./
+RUN uv sync --dev
+
+COPY backend /workspaces/app/backend
+
+CMD ["uv", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+
+# =============================================================================
+# ci-frontend: frontend app 起動用
+# =============================================================================
+FROM ci-base AS ci-frontend
+
+WORKDIR /workspaces/app/frontend
+
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY frontend /workspaces/app/frontend
+
+CMD ["pnpm", "dev", "--host", "0.0.0.0", "--port", "3000"]
 
 
 # =============================================================================
