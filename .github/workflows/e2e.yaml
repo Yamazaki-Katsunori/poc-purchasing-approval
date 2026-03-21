@@ -40,10 +40,10 @@ jobs:
 
       - name: Start containers
         working-directory: .
-        run: docker compose -f compose.ci.yaml --env-file .env.ci up -d --build
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci up -d --build
 
       - name: Show container status
-        run: docker compose -f compose.ci.yaml --env-file .env.ci ps -a
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci ps -a
 
       - name: Wait for app
         working-directory: .
@@ -58,9 +58,9 @@ jobs:
       - name: Show container logs on failure
         if: failure()
         working-directory: .
-        run: docker compose -f compose.ci.yaml --env-file .env.ci logs --no-color
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci logs --no-color
 
       - name: Stop containers
         if: always()
         working-directory: .
-        run: docker compose -f compose.ci.yaml --env-file .env.ci down -v
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci down -v
