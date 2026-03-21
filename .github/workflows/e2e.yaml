@@ -42,6 +42,9 @@ jobs:
         working-directory: .
         run: docker compose -f compose.ci.yaml --env-file .env.ci up -d --build
 
+      - name: Show container status
+        run: docker compose -f compose.ci.yaml --env-file .env.ci ps -a
+
       - name: Wait for app
         working-directory: .
         run: |

@@ -21,7 +21,7 @@ jobs:
         run: docker compose -f compose.ci.yaml --env-file .env.ci up -d --build
 
       - name: Show container status
-        run: docker compose -f compose.ci.yaml --env-file .env.ci ps
+        run: docker compose -f compose.ci.yaml --env-file .env.ci ps -a
 
       - name: Run migrations
         run: docker compose -f compose.ci.yaml --env-file .env.ci exec -T backend uv run alembic upgrade head

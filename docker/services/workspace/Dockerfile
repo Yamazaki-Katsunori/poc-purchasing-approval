@@ -62,7 +62,7 @@ FROM ci-base AS ci-backend
 
 WORKDIR /workspaces/app/backend
 
-COPY backend/pyproject.toml backend/uv.lock ./
+COPY backend/pyproject.toml backend/uv.lock backend/alembic.ini ./
 RUN uv sync --dev
 
 COPY backend /workspaces/app/backend
