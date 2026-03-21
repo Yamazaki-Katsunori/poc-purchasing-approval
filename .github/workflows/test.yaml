@@ -14,71 +14,47 @@ jobs:
     name: backend (pytest)
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:18
-        env:
-          POSTGRES_DB: app
-          POSTGRES_USER: app
-          POSTGRES_PASSWORD: app
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U app -d app"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
-
-    env:
-      DB_CONNECTION: pgsql
-      DATABASE_HOST: localhost
-      DATABASE_PORT: 5432
-      DATABASE_NAME: app
-      DATABASE_USER: app
-      DATABASE_PASSWORD: app
-
-    defaults:
-      run:
-        working-directory: backend
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.14"
+      - name: Start containers
+        run: docker compose -f compose.ci.yaml --env-file .env.ci up -d --build
 
-      - name: Setup uv
-        uses: astral-sh/setup-uv@v3
-        with:
-          enable-cache: true
-
-      - name: Install deps
-        run: uv sync --dev
+      - name: Show container status
+        run: docker compose -f compose.ci.yaml --env-file .env.ci ps
 
       - name: Run migrations
-        run: uv run alembic upgrade head
+        run: docker compose -f compose.ci.yaml --env-file .env.ci exec -T backend uv run alembic upgrade head
 
       - name: Seed data
-        run: uv run python -m src.scripts.seeds.run_all_seeds
+        run: docker compose -f compose.ci.yaml --env-file .env.ci exec -T backend uv run python -m src.scripts.seeds.run_all_seeds
 
       - name: Pytest
         run: |
-          uv run pytest -q || code=$?
-          if [ "${code:-0}" -eq 5 ]; then
-            echo "No tests collected. Skipping."
-            exit 0
-          fi
-          exit "${code:-0}"
+          docker compose -f compose.ci.yaml --env-file .env.ci exec -T backend sh -c '
+            uv run pytest -q || code=$?
+            if [ "${code:-0}" -eq 5 ]; then
+              echo "No tests collected. Skipping."
+              exit 0
+            fi
+            exit "${code:-0}"
+          '
 
-  # frontend の unit test を入れるときはここに追加
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose -f compose.ci.yaml --env-file .env.ci logs --no-color
+
+      - name: Stop containers
+        if: always()
+        run: docker compose -f compose.ci.yaml --env-file .env.ci down -v
+
   frontend:
     name: frontend (vitest)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
+
     steps:
       - uses: actions/checkout@v4
 
