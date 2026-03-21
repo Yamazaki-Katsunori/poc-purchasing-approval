@@ -1,7 +1,8 @@
 # =============================================================================
-# base: ci / prod で共通利用したい土台
+# DevPod / devcontainer 用
+# ※ DevPod ではマルチステージビルドの構築イメージがうまく認識しないため、別ファイル化
 # =============================================================================
-FROM mcr.microsoft.com/devcontainers/base:ubuntu AS base
+FROM mcr.microsoft.com/devcontainers/base:ubuntu
 
 ARG USERNAME=vscode
 ARG USER_UID=1000
@@ -36,32 +37,6 @@ RUN set -e; \
   chmod 0440 "/etc/sudoers.d/$USERNAME"
 
 WORKDIR /workspaces/app
-
-
-# =============================================================================
-# ci: GitHub Actions / compose.ci.yaml 用
-# =============================================================================
-FROM base AS ci
-
-RUN set -e; \
-  curl -fsSL https://deb.nodesource.com/setup_24.x | bash -; \
-  apt-get update; \
-  apt-get install -y --no-install-recommends nodejs; \
-  npm install -g pnpm; \
-  rm -rf /var/lib/apt/lists/*
-
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
-
-USER $USERNAME
-
-CMD ["sleep", "infinity"]
-
-
-# =============================================================================
-# prod: 本番用の最小構成例
-# =============================================================================
-FROM base AS prod
-
 USER $USERNAME
 
 CMD ["sleep", "infinity"]

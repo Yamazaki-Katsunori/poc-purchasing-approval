@@ -1,9 +1,8 @@
 {
-  "name": "nvim-archetype",
+  "name": "poc-purchasing-approval",
   "dockerComposeFile": ["compose.yaml"],
   "service": "workspace",
   "workspaceFolder": "/workspaces/app",
-  "runArgs": ["--env-file", ".devcontainer/.env"],
   "shutdownAction": "stopCompose",
   "remoteUser": "vscode",
   "features": {
