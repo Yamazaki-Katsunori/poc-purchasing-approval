@@ -40,7 +40,7 @@ jobs:
 
       - name: Start containers
         working-directory: .
-        run: docker compose up -d
+        run: docker compose -f compose.ci.yaml --env-file .env.ci up -d --build
 
       - name: Wait for app
         working-directory: .

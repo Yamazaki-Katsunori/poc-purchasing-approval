@@ -30,6 +30,7 @@ jobs:
           --health-retries=10
 
     env:
+      DB_CONNECTION: pgsql
       DATABASE_HOST: localhost
       DATABASE_PORT: 5432
       DATABASE_NAME: app
