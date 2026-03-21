@@ -46,6 +46,14 @@ jobs:
         working-directory: .
         run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci ps -a
 
+      - name: Start uvicron
+        working-directory: .
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci exec -T backend uv run uvicron src.main;app --reload --host "0.0.0.0" --port 8000
+
+      - name: Start next.js server
+        working-directory: .
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci exec -T frontend pnpm dev
+
       - name: Wait for app
         working-directory: .
         run: |
