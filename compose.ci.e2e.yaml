@@ -34,8 +34,8 @@ services:
       DB_DATABASE: ${DB_DATABASE:-app}
       DB_USERNAME: ${DB_USERNAME:-app}
       DB_PASSWORD: ${DB_PASSWORD:-app}
-    volumes:
-      - .:/workspaces/app
+    # volumes:
+    #   - .:/workspaces/app
     depends_on:
       db:
         condition: service_healthy
@@ -49,8 +49,8 @@ services:
     working_dir: /workspaces/app/frontend
     env_file:
       - .env.ci
-    volumes:
-      - .:/workspaces/app
+    # volumes:
+    #   - .:/workspaces/app
     depends_on:
       - backend
     command: pnpm dev
@@ -61,7 +61,7 @@ services:
       - "8080:80"
     volumes:
       - ./docker/services/web/nginx/default.ci.conf:/etc/nginx/conf.d/default.conf:ro
-      - .:/workspaces/app:ro
+      # - .:/workspaces/app:ro
     depends_on:
       - frontend
       - backend
