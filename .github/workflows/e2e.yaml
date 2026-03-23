@@ -78,7 +78,7 @@ jobs:
       - name: Run Playwright
         working-directory: .
         run: |
-          docker compose exec -T frontend \
+          docker -f compose.ci.be.yaml --env-file .env.ci exec -T frontend \
           pnpm test:e2e || \
           (docker compose logs && exit 1)
 
