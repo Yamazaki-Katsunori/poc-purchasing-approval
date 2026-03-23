@@ -46,6 +46,14 @@ jobs:
         working-directory: .
         run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci ps -a
 
+      - name: Debug container logs Error
+        working-directory: .
+        run: |
+          docker logs poc-purchasing-approval-backend-1 2>&1 | grep "ERROR"; \
+          docker logs poc-purchasing-approval-frontend-1 2>&1 | grep "ERROR"; \
+          docker logs poc-purchasing-approval-db-1 2>&1 | grep "ERROR"; \
+          docker logs poc-purchasing-approval-web-1 2>&1 | grep "ERROR";
+
       - name: Run migrations
         working-directory: .
         run: docker compose -f compose.ci.be.yaml --env-file .env.ci exec -T backend uv run alembic upgrade head

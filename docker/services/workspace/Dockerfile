@@ -69,7 +69,7 @@ USER root
 COPY --chown=${USERNAME}:${USERNAME} backend /workspaces/app/backend
 USER ${USERNAME}
 
-CMD ["uv", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# CMD ["uv", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 CMD ["sleep", "infinity"]
 
 # =============================================================================
@@ -86,9 +86,8 @@ USER root
 COPY --chown=${USERNAME}:${USERNAME} frontend /workspaces/app/frontend
 USER ${USERNAME}
 
-CMD ["pnpm", "dev"]
+# CMD ["pnpm", "dev"]
 CMD ["sleep", "infinity"]
-
 
 # =============================================================================
 # prod: 本番用の最小構成例
