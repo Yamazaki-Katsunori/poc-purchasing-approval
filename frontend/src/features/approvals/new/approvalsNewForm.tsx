@@ -4,9 +4,9 @@ import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle, Input, Se
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { ApprovalsNewFormSchema, ApprovalsNewFormTypes } from './schemas/approvals-new-schema';
-import { useApprovalButton } from './hooks/action-approval-button';
 import { formatNumberWithComma, normalizeNumberInput } from '@/shared/numberInputs/numberInput';
 import { useState } from 'react';
+import { useApprovalCreateAction } from './hooks/use-approval-create-action';
 
 export function ApprovalsNewForm() {
   const {
@@ -21,13 +21,13 @@ export function ApprovalsNewForm() {
     reValidateMode: 'onChange',
     defaultValues: {
       title: '',
-      purchese_type: '',
+      purchase_type: '',
       amount: '',
       reason: '',
     },
   });
 
-  const { onSubmit, onCancel } = useApprovalButton();
+  const { onSubmit, onCancel, isPending, error } = useApprovalCreateAction();
 
   const [isAmountFocused, setIsAmountFocused] = useState(false);
 
@@ -60,13 +60,13 @@ export function ApprovalsNewForm() {
             <Select
               id="purchase_type"
               defaultValue=""
-              error={errors.purchese_type && '選択してください'}
+              error={errors.purchase_type && '選択してください'}
               options={[
                 { value: 'goods', label: '物品' },
                 { value: 'service', label: 'サービス' },
                 { value: 'equipment', label: '備品' },
               ]}
-              {...register('purchese_type')}
+              {...register('purchase_type')}
             />
           </div>
 
@@ -106,10 +106,18 @@ export function ApprovalsNewForm() {
             キャンセル
           </Button>
 
-          <Button type="submit" className="" variant="primary">
-            確認
-          </Button>
+          {isPending ? (
+            <Button type="submit" disabled className="" variant="primary">
+              確認中...
+            </Button>
+          ) : (
+            <Button type="submit" className="" variant="primary">
+              確認
+            </Button>
+          )}
         </CardFooter>
+
+        {error && error?.message}
       </Card>
     </form>
   );

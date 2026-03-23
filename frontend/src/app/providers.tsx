@@ -2,6 +2,8 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode, useState } from 'react';
+import { Provider as JotaiProvider } from 'jotai';
+import { createStore } from 'jotai';
 
 type ProvidersProps = {
   children: ReactNode;
@@ -10,5 +12,11 @@ type ProvidersProps = {
 export function Providers({ children }: ProvidersProps) {
   const [queryClient] = useState(() => new QueryClient());
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  const store = createStore();
+
+  return (
+    <JotaiProvider store={store}>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+    </JotaiProvider>
+  );
 }
