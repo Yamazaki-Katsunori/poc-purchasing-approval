@@ -2,7 +2,7 @@ import z from 'zod';
 
 export const ApprovalsNewFormSchema = z.object({
   title: z.string().min(1, { error: 'タイトルは1文字以上入力してください' }),
-  purchese_type: z.string(),
+  purchase_type: z.string(),
   amount: z
     .string()
     .min(1, { error: '購入金額は1円以上入力してください' })
