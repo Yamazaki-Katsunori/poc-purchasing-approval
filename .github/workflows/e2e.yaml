@@ -46,13 +46,19 @@ jobs:
         working-directory: .
         run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci ps -a
 
-      - name: Debug container logs Error
-        working-directory: .
+      - name: Show container logs
         run: |
-          docker logs poc-purchasing-approval-backend-1 2>&1 | grep "ERROR"; \
-          docker logs poc-purchasing-approval-frontend-1 2>&1 | grep "ERROR"; \
-          docker logs poc-purchasing-approval-db-1 2>&1 | grep "ERROR"; \
-          docker logs poc-purchasing-approval-web-1 2>&1 | grep "ERROR";
+          for id in $(docker ps -aq); do
+            echo "===== LOGS for $id ====="
+            docker logs $id || true
+          done
+
+      - name: Inspect containers
+        run: |
+          for id in $(docker ps -aq); do
+          echo "===== INSPECT for $id ====="
+          docker inspect $id || true
+          done
 
       - name: Run migrations
         working-directory: .
