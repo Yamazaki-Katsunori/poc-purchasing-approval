@@ -76,6 +76,7 @@ jobs:
           done
 
       - name: Run Playwright
+        working-directory: .
         run: |
           docker compose exec -T frontend \
           pnpm test:e2e || \
