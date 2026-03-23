@@ -86,6 +86,8 @@ USER root
 COPY --chown=${USERNAME}:${USERNAME} frontend /workspaces/app/frontend
 USER ${USERNAME}
 
+RUN pnpm exec playwright install --with-deps chromium
+
 # CMD ["pnpm", "dev"]
 CMD ["sleep", "infinity"]
 
