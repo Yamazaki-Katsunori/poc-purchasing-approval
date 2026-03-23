@@ -1,6 +1,4 @@
-
-
-  #!/usr/bin/env bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -73,7 +71,7 @@ wait_for_db() {
   local max_retry=30
   local retry=0
 
-  until bash -lc "cd '$BACKEND_ROOT' && uv run python -c 'from sqlalchemy import create_engine; from src.core.config import settings; engine=create_engine(settings.database_url); conn=engine.connect(); conn.close()'"; do
+  until uv run python -c 'from sqlalchemy import create_engine; import os; engine=create_engine(os.environ["DATABASE_URL"]); conn=engine.connect(); conn.close()' >/dev/null 2>&1; do
     retry=$((retry + 1))
     if [[ "$retry" -ge "$max_retry" ]]; then
       log "database is not ready"
@@ -252,8 +250,9 @@ if [[ -d "$FRONTEND_ROOT" && -f "$FRONTEND_ROOT/package.json" ]]; then
   else
     if [[ "$NEED_ADD" -eq 1 ]]; then
       if [[ "${#PNPM_DEPS[@]}" -gt 0 ]]; then
-        run_shell "pnpm add ${PNPM_DEPS[*]}”
+        run_shell "pnpm add ${PNPM_DEPS[*]}"
       fi
+
       if [[ "${#PNPM_DEV_DEPS[@]}" -gt 0 ]]; then
         run_shell "pnpm add -D ${PNPM_DEV_DEPS[*]}"
       fi
