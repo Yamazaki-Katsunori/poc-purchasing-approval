@@ -6,9 +6,7 @@ import { useAtomValue } from 'jotai';
 import { approvalCreateAtom } from '@/store/approvals/approval-create-atom';
 import { ConfirmRow } from './components/confirmRow';
 import { useBackAction } from './hooks/use-back-action';
-
-// debug用
-const isPending = false;
+import { useConfirmAction } from './hooks/use-confirm-action';
 
 export function ApprovalsNewConfirm() {
   const getApprovalValues = useAtomValue(approvalCreateAtom);
@@ -19,6 +17,7 @@ export function ApprovalsNewConfirm() {
   const reasonLabel = getApprovalValues?.reason ?? '-';
 
   const { onCansel } = useBackAction();
+  const { onSubmit, isPending, error } = useConfirmAction();
 
   return (
     <Card>
@@ -41,16 +40,22 @@ export function ApprovalsNewConfirm() {
             onCansel(getApprovalValues);
           }}
         >
-          {/* {isPending ? '入力画面遷移中...' : '入力画面へ戻る'} */}
           入力画面へ戻る
         </Button>
 
-        <Button type="button" variant="primary" onClick={() => console.log('submit click')} disabled={isPending}>
+        <Button
+          type="button"
+          variant="primary"
+          onClick={() => {
+            onSubmit(getApprovalValues);
+          }}
+          disabled={isPending}
+        >
           {isPending ? '申請中...' : 'この内容で申請する'}
         </Button>
       </CardFooter>
 
-      {/* {error?.message ? <p className="px-6 pb-4 text-sm text-red-500">{error.message}</p> : null} */}
+      {error?.message ? <p className="px-6 pb-4 text-sm text-red-500">{error.message}</p> : null}
     </Card>
   );
 }
