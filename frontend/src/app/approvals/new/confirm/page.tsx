@@ -1,5 +1,5 @@
-import { ApprovalsNewConfirm } from '@/features/approvals/confirm/approvalsNewConfirm';
+import { ConfirmClient } from '@/features/approvals/confirm/confirmClient';
 
 export default function Page() {
-  return <ApprovalsNewConfirm />;
+  return <ConfirmClient />;
 }

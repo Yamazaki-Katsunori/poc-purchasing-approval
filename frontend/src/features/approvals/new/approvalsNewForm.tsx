@@ -7,8 +7,12 @@ import { ApprovalsNewFormSchema, ApprovalsNewFormTypes } from './schemas/approva
 import { formatNumberWithComma, normalizeNumberInput } from '@/shared/numberInputs/numberInput';
 import { useState } from 'react';
 import { useApprovalCreateAction } from './hooks/use-approval-create-action';
+import { useAtomValue } from 'jotai';
+import { approvalCreateAtom } from '@/store/approvals/approval-create-atom';
 
 export function ApprovalsNewForm() {
+  const draft = useAtomValue(approvalCreateAtom);
+
   const {
     register,
     control,
@@ -20,10 +24,10 @@ export function ApprovalsNewForm() {
     mode: 'onSubmit',
     reValidateMode: 'onChange',
     defaultValues: {
-      title: '',
-      purchase_type: '',
-      amount: '',
-      reason: '',
+      title: draft?.title ?? '',
+      purchase_type: draft?.purchase_type ?? '',
+      amount: draft?.amount ?? '',
+      reason: draft?.reason ?? '',
     },
   });
 
@@ -34,7 +38,6 @@ export function ApprovalsNewForm() {
   const amount = useWatch({
     control,
     name: 'amount',
-    defaultValue: '',
   });
 
   const amountRegister = register('amount');
