@@ -1,5 +1,5 @@
 import { apiClient } from '@/shared/api/client';
-import type { ApprovalsNewFormTypes } from '../schemas/approvals-new-schema';
+import type { CreateApprovalRequestTypes } from '@/features/approvals/schemas/approvals-new-schema';
 
 type CreateApprovalResponse = {
   title: string;
@@ -8,7 +8,7 @@ type CreateApprovalResponse = {
   reason: string;
 };
 
-export const createApprovalApi = async (data: ApprovalsNewFormTypes): Promise<CreateApprovalResponse> => {
+export const createApprovalApi = async (data: CreateApprovalRequestTypes): Promise<CreateApprovalResponse> => {
   return apiClient<CreateApprovalResponse>('/approvals/new', {
     method: 'POST',
     body: data,

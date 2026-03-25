@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useApprovalCreateAction } from './use-approval-create-action';
 import { createStore, Provider } from 'jotai';
 import { approvalCreateAtom } from '@/store/approvals/approval-create-atom';
-import { ApprovalsNewFormTypes } from '../schemas/approvals-new-schema';
+import { CreateApprovalRequestTypes } from '@/features/approvals/schemas/approvals-new-schema';
 
 const pushMock = vi.fn();
 const refreshMock = vi.fn();
@@ -50,7 +50,7 @@ describe('useCreateApproval', () => {
 
     const wrapper = ({ children }: { children: ReactNode }) => <Provider store={store}>{children}</Provider>;
 
-    const formData: ApprovalsNewFormTypes = {
+    const formData: CreateApprovalRequestTypes = {
       title: '備品購入申請',
       purchase_type: '備品',
       amount: '498',
@@ -79,7 +79,7 @@ describe('useCreateApproval', () => {
 
     const wrapper = ({ children }: { children: React.ReactNode }) => <Provider store={store}>{children}</Provider>;
 
-    const formData: ApprovalsNewFormTypes = {
+    const formData: CreateApprovalRequestTypes = {
       title: '備品購入申請',
       purchase_type: '備品',
       amount: '10000',
