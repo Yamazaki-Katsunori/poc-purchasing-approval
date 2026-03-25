@@ -1,9 +1,11 @@
 import { assertNonNullable } from '@/shared/guards/asserts';
-import { ApprovalsNewFormTypes } from '../../new/schemas/approvals-new-schema';
+import { CreateApprovalRequestTypes } from '@/features/approvals/schemas/approvals-new-schema';
 import { APP_CODE } from '@/shared/app-code';
 
-type AssertNewApprovalFormData = (value: ApprovalsNewFormTypes | null) => asserts value is ApprovalsNewFormTypes;
+type AssertCreateApprovalRequestData = (
+  value: CreateApprovalRequestTypes | null,
+) => asserts value is CreateApprovalRequestTypes;
 
-export const assertNewApprovalFormData: AssertNewApprovalFormData = (value) => {
+export const assertCreateApprovalRequestData: AssertCreateApprovalRequestData = (value) => {
   assertNonNullable(value, APP_CODE.APPROVAL_DRAFT_NOT_FOUND);
 };

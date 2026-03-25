@@ -1,6 +1,6 @@
 import z from 'zod';
 
-export const ApprovalsNewFormSchema = z.object({
+export const CreateApprovalRequestSchema = z.object({
   title: z.string().min(1, { error: 'タイトルは1文字以上入力してください' }),
   purchase_type: z.string(),
   amount: z
@@ -10,4 +10,4 @@ export const ApprovalsNewFormSchema = z.object({
   reason: z.string(),
 });
 
-export type ApprovalsNewFormTypes = z.infer<typeof ApprovalsNewFormSchema>;
+export type CreateApprovalRequestTypes = z.infer<typeof CreateApprovalRequestSchema>;

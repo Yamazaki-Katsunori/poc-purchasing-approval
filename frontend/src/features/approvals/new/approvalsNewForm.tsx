@@ -3,10 +3,13 @@
 import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle, Input, Select, Textarea } from '@/ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
-import { ApprovalsNewFormSchema, ApprovalsNewFormTypes } from './schemas/approvals-new-schema';
+import {
+  CreateApprovalRequestSchema,
+  CreateApprovalRequestTypes,
+} from '@/features/approvals/schemas/approvals-new-schema';
 import { formatNumberWithComma, normalizeNumberInput } from '@/shared/numberInputs/numberInput';
 import { useState } from 'react';
-import { useApprovalCreateAction } from './hooks/use-approval-create-action';
+import { useApprovalCreateAction } from '@/features/approvals/new/hooks/use-approval-create-action';
 import { useAtomValue } from 'jotai';
 import { approvalCreateAtom } from '@/store/approvals/approval-create-atom';
 
@@ -19,8 +22,8 @@ export function ApprovalsNewForm() {
     formState: { errors, isSubmitted },
     handleSubmit,
     setValue,
-  } = useForm<ApprovalsNewFormTypes>({
-    resolver: zodResolver(ApprovalsNewFormSchema),
+  } = useForm<CreateApprovalRequestTypes>({
+    resolver: zodResolver(CreateApprovalRequestSchema),
     mode: 'onSubmit',
     reValidateMode: 'onChange',
     defaultValues: {

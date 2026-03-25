@@ -2,16 +2,16 @@ import { approvalCreateAtom } from '@/store/approvals/approval-create-atom';
 import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { useConfirmApprovalMutation } from './use-comfirm-approval-mutation';
-import { ApprovalsNewFormTypes } from '../../new/schemas/approvals-new-schema';
-import { assertNewApprovalFormData } from '../guards/asserts';
+import { CreateApprovalRequestTypes } from '@/features/approvals/schemas/approvals-new-schema';
+import { assertCreateApprovalRequestData } from '@/features/approvals/confirm/guards/asserts';
 
 export function useConfirmAction() {
   const router = useRouter();
   const setApprovalAtom = useSetAtom(approvalCreateAtom);
   const mutation = useConfirmApprovalMutation();
 
-  const onSubmit = async (data: ApprovalsNewFormTypes | null) => {
-    assertNewApprovalFormData(data);
+  const onSubmit = async (data: CreateApprovalRequestTypes | null) => {
+    assertCreateApprovalRequestData(data);
 
     await mutation.mutateAsync(data);
 

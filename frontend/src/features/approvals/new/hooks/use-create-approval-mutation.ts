@@ -1,11 +1,11 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { ApprovalsNewFormTypes } from '../schemas/approvals-new-schema';
-import { createApprovalApi } from '../api/create-approval';
+import { CreateApprovalRequestTypes } from '@/features/approvals/schemas/approvals-new-schema';
+import { createApprovalApi } from '@/features/approvals/new/api/create-approval';
 
 export function useCreateApprovalMutation() {
   return useMutation({
-    mutationFn: (data: ApprovalsNewFormTypes) => createApprovalApi(data),
+    mutationFn: (data: CreateApprovalRequestTypes) => createApprovalApi(data),
   });
 }

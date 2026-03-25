@@ -4,14 +4,14 @@ import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
 import { approvalCreateAtom } from '@/store/approvals/approval-create-atom';
 import { useCreateApprovalMutation } from './use-create-approval-mutation';
-import type { ApprovalsNewFormTypes } from '../schemas/approvals-new-schema';
+import type { CreateApprovalRequestTypes } from '@/features/approvals/schemas/approvals-new-schema';
 
 export const useApprovalCreateAction = () => {
   const router = useRouter();
   const setApprovalCreate = useSetAtom(approvalCreateAtom);
   const mutation = useCreateApprovalMutation();
 
-  const onSubmit = async (data: ApprovalsNewFormTypes) => {
+  const onSubmit = async (data: CreateApprovalRequestTypes) => {
     await mutation.mutateAsync(data);
     setApprovalCreate(data);
     router.push('/approvals/new/confirm');
