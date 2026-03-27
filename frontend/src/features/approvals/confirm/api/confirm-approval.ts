@@ -7,7 +7,7 @@ type ConfirmResponse = {
 };
 
 export const confirmApprovalApi = async (data: CreateApprovalRequestTypes): Promise<ConfirmResponse> => {
-  return apiClient<ConfirmResponse>('approvals/confirm', {
+  return apiClient<ConfirmResponse>('/approvals/confirm', {
     method: 'POST',
     body: data,
   });

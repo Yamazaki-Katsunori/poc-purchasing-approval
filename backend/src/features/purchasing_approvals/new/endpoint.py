@@ -1,21 +1,18 @@
 from fastapi import APIRouter
 
-from src.features.purchasing_approvals.new.schemas import NewApprovalRequest, NewApprovalResponse
+from src.features.purchasing_approvals.confirm.schemas import ConfirmApprovalRequest, ConfirmApprovalResponse
+
+router = APIRouter(prefix="/approvals", tags=["approvals", "new"])
 
 
-router = APIRouter(prefix='/approvals', tags=['approvals', 'new'])
-
-@router.post("/new",response_model=NewApprovalResponse)
-def new_approvals(request: NewApprovalRequest):
+@router.post("/new", response_model=ConfirmApprovalResponse)
+def new_approvals(request: ConfirmApprovalRequest):
     """新規申請フォームで入力されたRequestを検証し、結果を返す"""
 
     print(f"request_data: {request}")
 
-    return NewApprovalResponse(
-        title=request.title,
-        purchase_type=request.purchase_type,
-        amount=request.amount,
-        reason=request.reason
+    return ConfirmApprovalResponse(
+        title=request.title, purchase_type=request.purchase_type, amount=request.amount, reason=request.reason
     )
 
 
