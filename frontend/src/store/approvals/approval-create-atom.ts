@@ -1,13 +1,13 @@
 'use client';
 
-import type { ApprovalsNewFormTypes } from '@/features/approvals/new/schemas/approvals-new-schema';
+import type { CreateApprovalRequestTypes } from '@/features/approvals/schemas/approvals-new-schema';
 import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 
 const storage =
   typeof window !== 'undefined'
-    ? createJSONStorage<ApprovalsNewFormTypes | null>(() => window.sessionStorage)
+    ? createJSONStorage<CreateApprovalRequestTypes | null>(() => window.sessionStorage)
     : undefined;
 
-export const approvalCreateAtom = atomWithStorage<ApprovalsNewFormTypes | null>('approvalCreate', null, storage, {
+export const approvalCreateAtom = atomWithStorage<CreateApprovalRequestTypes | null>('approvalCreate', null, storage, {
   getOnInit: true,
 });
