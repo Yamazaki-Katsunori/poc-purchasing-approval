@@ -1,7 +1,7 @@
 import { approvalCreateAtom } from '@/store/approvals/approval-create-atom';
 import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
-import { CreateApprovalRequestTypes } from '../../schemas/approvals-new-schema';
+import { CreateApprovalRequestTypes } from '@/features/approvals/schemas/approvals-new-schema';
 
 export function useBackAction() {
   const router = useRouter();

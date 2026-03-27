@@ -1,7 +1,7 @@
 import { approvalCreateAtom } from '@/store/approvals/approval-create-atom';
 import { useSetAtom } from 'jotai';
 import { useRouter } from 'next/navigation';
-import { useConfirmApprovalMutation } from './use-comfirm-approval-mutation';
+import { useConfirmApprovalMutation } from './use-confirm-approval-mutation';
 import { CreateApprovalRequestTypes } from '@/features/approvals/schemas/approvals-new-schema';
 import { assertCreateApprovalRequestData } from '@/features/approvals/confirm/guards/asserts';
 
