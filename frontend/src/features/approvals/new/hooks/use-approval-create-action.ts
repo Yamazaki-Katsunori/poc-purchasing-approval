@@ -20,7 +20,6 @@ export const useApprovalCreateAction = () => {
   const onCancel = async () => {
     setApprovalCreate(null);
     router.push('/');
-    router.refresh();
   };
 
   return {
