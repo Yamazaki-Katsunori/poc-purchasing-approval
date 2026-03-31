@@ -7,6 +7,8 @@ from src.features.purchasing_approvals.confirm.service import CreateApprovalServ
 from src.models.purchasing_approval import PurchasingApproval
 from src.models.purchasing_approval_event import PurchasingApprovalEvent
 from src.models.purchasing_approval_status import PurchasingApprovalStatus
+from src.shared.enums.approval_actions_enum import ApprovalActionState
+from src.shared.enums.approval_status_enum import ApprovalStatusCode
 
 
 def test_create_approval_action_success():
@@ -16,7 +18,9 @@ def test_create_approval_action_success():
     approval_repository = MagicMock()
     approval_event_repository = MagicMock()
 
-    pending_status = PurchasingApprovalStatus(id=1, code="PENDING", name="申請中")
+    pending_status = PurchasingApprovalStatus(
+        id=1, code=ApprovalStatusCode.SUBMITTED.value, name=ApprovalStatusCode.SUBMITTED.label
+    )
     db.scalar.return_value = pending_status
 
     created_approval = PurchasingApproval(
@@ -37,7 +41,7 @@ def test_create_approval_action_success():
         subject_id=10,
         performed_by=1,
         status_id=pending_status.id,
-        action="REQUEST",
+        action=ApprovalActionState.REQUEST.value,
     )
     approval_event_repository.create_approval_event.return_value = created_event
 
@@ -97,7 +101,7 @@ def test_create_approval_action_raises_value_error_when_pending_status_not_found
         reason="開発業務で利用するため",
     )
 
-    with pytest.raises(ValueError, match="PENDING status not found"):
+    with pytest.raises(ValueError, match="SUBMITTED status not found"):
         service.create_approval_action(user_id=1, data=request)
 
     approval_repository.create_approval.assert_not_called()
@@ -112,7 +116,9 @@ def test_create_approval_action_raises_runtime_error_when_create_approval_failed
     approval_repository = MagicMock()
     approval_event_repository = MagicMock()
 
-    pending_status = PurchasingApprovalStatus(id=1, code="PENDING", name="申請中")
+    pending_status = PurchasingApprovalStatus(
+        id=1, code=ApprovalStatusCode.SUBMITTED.value, name=ApprovalStatusCode.SUBMITTED.label
+    )
     db.scalar.return_value = pending_status
 
     approval_repository.create_approval.side_effect = RuntimeError("create approval error")
@@ -145,7 +151,9 @@ def test_create_approval_action_raises_runtime_error_when_create_approval_event_
     approval_repository = MagicMock()
     approval_event_repository = MagicMock()
 
-    pending_status = PurchasingApprovalStatus(id=1, code="PENDING", name="申請中")
+    pending_status = PurchasingApprovalStatus(
+        id=1, code=ApprovalStatusCode.SUBMITTED.value, name=ApprovalStatusCode.SUBMITTED.label
+    )
     db.scalar.return_value = pending_status
 
     created_approval = PurchasingApproval(
