@@ -1,9 +1,7 @@
-from fastapi import APIRouter, Cookie, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Cookie, HTTPException, status
 from starlette.status import HTTP_401_UNAUTHORIZED, HTTP_500_INTERNAL_SERVER_ERROR
 from wireup import Injected
 
-from src.db.session import make_db_session
 from src.features.purchasing_approvals.confirm.schemas import ConfirmApprovalRequest, ConfirmApprovalResponse
 from src.features.purchasing_approvals.confirm.service import CreateApprovalService
 from src.shared.security import decode_access_token
@@ -16,7 +14,6 @@ def confirm_approvals(
     request: ConfirmApprovalRequest,
     confirm_service: Injected[CreateApprovalService],
     access_token: str | None = Cookie(default=None),
-    db: Session = Depends(make_db_session),
 ) -> ConfirmApprovalResponse:
     """新規申請確認画面から送信されたRequestを検証し、申請を新規作成する"""
 
@@ -39,19 +36,18 @@ def confirm_approvals(
 
     # db transaction block
     try:
-        with db.begin():
-            approval = confirm_service.create_approval_action(user_id=user_id, data=request)
-
-        db.refresh(approval)
+        approval = confirm_service.create_approval_action(user_id=user_id, data=request)
         return ConfirmApprovalResponse.model_validate(approval)
 
     except ValueError as exc:
+        print("unexpected error:", repr(exc))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(exc),
         ) from exc
 
     except Exception as exc:
+        print("unexpected error:", repr(exc))
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
             detail="申請の作成に失敗しました",

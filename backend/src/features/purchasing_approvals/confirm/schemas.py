@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ConfirmApprovalRequest(BaseModel):
@@ -14,6 +14,8 @@ class ConfirmApprovalRequest(BaseModel):
 
 class ConfirmApprovalResponse(BaseModel):
     """購買新規申請確認画面レスポンススキーマ"""
+
+    model_config = ConfigDict(from_attributes=True)
 
     title: str
     purchase_type: str
