@@ -8,6 +8,7 @@ from src.features.purchasing_approvals.confirm.interfaces import (
     IPurchasingApprovalEventRepository,
     IPurchasingApprovalRepository,
 )
+from src.features.purchasing_approvals.confirm.schemas import ConfirmApprovalRequest
 from src.models.purchasing_approval import PurchasingApproval
 from src.models.purchasing_approval_event import PurchasingApprovalEvent
 from src.models.purchasing_approval_status import PurchasingApprovalStatus
@@ -28,10 +29,7 @@ class CreateApprovalService:
     def create_approval_action(
         self,
         user_id: int,
-        title: str,
-        purchase_type: str,
-        amount: int,
-        reason: str,
+        data: ConfirmApprovalRequest,
     ) -> PurchasingApproval:
         pending_status = self.db.scalar(
             select(PurchasingApprovalStatus).where(PurchasingApprovalStatus.code == "PENDING")
@@ -42,36 +40,32 @@ class CreateApprovalService:
 
         now = datetime.now(UTC)
 
-        try:
-            approval = PurchasingApproval(
-                user_id=user_id,
-                title=title,
-                purchase_type=purchase_type,
-                amount=amount,
-                reason=reason,
-                current_status_id=pending_status.id,
-                current_event_id=None,
-                requested_at=now,
-            )
-            approval = self.approval_repository.create_approval(approval)
+        approval = PurchasingApproval(
+            user_id=user_id,
+            title=data.title,
+            purchase_type=data.purchase_type,
+            amount=data.amount,
+            reason=data.reason,
+            current_status_id=pending_status.id,
+            current_event_id=None,
+            requested_at=now,
+        )
+        approval = self.approval_repository.create_approval(approval)
 
-            event = PurchasingApprovalEvent(
-                subject_type="approval",
-                subject_id=approval.id,
-                performed_by=user_id,
-                status_id=pending_status.id,
-                action="REQUEST",
-                comment=None,
-                event_at=now,
-            )
-            event = self.approval_event_repository.create_approval_event(event)
+        event = PurchasingApprovalEvent(
+            subject_type="approval",
+            subject_id=approval.id,
+            performed_by=user_id,
+            status_id=pending_status.id,
+            action="REQUEST",
+            comment=None,
+            event_at=now,
+        )
+        event = self.approval_event_repository.create_approval_event(event)
 
-            approval = self.approval_repository.update_current_event_id(approval=approval, approval_event_id=event.id)
+        approval = self.approval_repository.update_current_event_id(
+            approval=approval,
+            approval_event_id=event.id,
+        )
 
-            self.db.commit()
-            self.db.refresh(approval)
-            return approval
-
-        except Exception:
-            self.db.rollback()
-            raise
+        return approval
