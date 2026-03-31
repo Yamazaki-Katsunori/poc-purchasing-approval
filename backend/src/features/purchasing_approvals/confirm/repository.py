@@ -36,7 +36,7 @@ class PurchasingApprovalEventRepository(IPurchasingApprovalEventRepository):
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def create_approval_events(self, approval_event: PurchasingApprovalEvent) -> PurchasingApprovalEvent:
+    def create_approval_event(self, approval_event: PurchasingApprovalEvent) -> PurchasingApprovalEvent:
         self.db.add(approval_event)
         self.db.flush()
         return approval_event
