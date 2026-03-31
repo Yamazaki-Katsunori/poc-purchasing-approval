@@ -1,15 +1,13 @@
-import os
 from collections.abc import Generator
-from typing import Final
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from wireup import injectable
 
-DATABASE_URL: Final[str] = os.getenv("DATABASE_URL", "postgresql+psycopg://app:app@db:5432/app")
+from src.db.config import build_postgresql_database_url
 
 engine = create_engine(
-    DATABASE_URL,
+    build_postgresql_database_url(),
     echo=False,
     pool_pre_ping=True,
 )
