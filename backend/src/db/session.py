@@ -7,7 +7,7 @@ from wireup import injectable
 from src.db.config import build_postgresql_database_url
 
 engine = create_engine(
-    build_postgresql_database_url(),
+    url=build_postgresql_database_url(),
     echo=False,
     pool_pre_ping=True,
 )
