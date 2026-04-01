@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from fastapi import status
-from fastapi.testclient import TestClient
 
 
-def test_auth_flow_login_me_logout(client: TestClient) -> None:
+def test_auth_flow_login_me_logout(client) -> None:
     """login -> me -> logout の認証フローが正常に動作すること."""
 
     login_payload = {
@@ -41,7 +40,7 @@ def test_auth_flow_login_me_logout(client: TestClient) -> None:
     assert me_after_logout_response.json() == {"detail": "Not authenticated"}
 
 
-def test_login_returns_401_when_email_does_not_exist(client: TestClient) -> None:
+def test_login_returns_401_when_email_does_not_exist(client) -> None:
     """存在しないメールアドレスの場合は 401 を返すこと."""
 
     payload = {
@@ -57,7 +56,7 @@ def test_login_returns_401_when_email_does_not_exist(client: TestClient) -> None
     }
 
 
-def test_login_returns_401_when_password_is_invalid(client: TestClient) -> None:
+def test_login_returns_401_when_password_is_invalid(client) -> None:
     """誤ったパスワードの場合は 401 を返すこと."""
 
     payload = {
@@ -73,7 +72,7 @@ def test_login_returns_401_when_password_is_invalid(client: TestClient) -> None:
     }
 
 
-def test_me_returns_401_when_not_authenticated(client: TestClient) -> None:
+def test_me_returns_401_when_not_authenticated(client) -> None:
     """未ログイン状態で /auth/me にアクセスした場合は 401 を返すこと."""
 
     response = client.get("/auth/me")
@@ -84,7 +83,7 @@ def test_me_returns_401_when_not_authenticated(client: TestClient) -> None:
     }
 
 
-def test_me_returns_401_after_logout(client: TestClient) -> None:
+def test_me_returns_401_after_logout(client) -> None:
     """logout 後は /auth/me が 401 を返すこと."""
 
     login_payload = {

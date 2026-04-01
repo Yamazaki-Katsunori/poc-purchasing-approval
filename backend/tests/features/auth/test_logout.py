@@ -1,8 +1,7 @@
 from fastapi import status
-from fastapi.testclient import TestClient
 
 
-def test_logout_success(client: TestClient) -> None:
+def test_logout_success(client) -> None:
     """CSRF トークン付きのログアウトが成功すること"""
 
     login_payload = {

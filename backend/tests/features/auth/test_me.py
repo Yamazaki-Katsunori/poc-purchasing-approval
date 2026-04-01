@@ -2,7 +2,6 @@ from types import SimpleNamespace
 
 import pytest
 from fastapi import status
-from fastapi.testclient import TestClient
 
 from src.features.auth.service import AuthService
 
@@ -29,7 +28,7 @@ def _mock_get_me(_self: AuthService, access_token: str):
 
 
 def test_me_returns_current_user_when_cookie_exists(
-    client: TestClient,
+    client,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """access_token cookie がある場合にログイン中ユーザーを返すこと."""
@@ -51,7 +50,7 @@ def test_me_returns_current_user_when_cookie_exists(
     }
 
 
-def test_me_returns_401_when_cookie_does_not_exist(client: TestClient) -> None:
+def test_me_returns_401_when_cookie_does_not_exist(client) -> None:
     """access_token cookie がない場合に 401 を返すこと."""
 
     response = client.get("/auth/me")
