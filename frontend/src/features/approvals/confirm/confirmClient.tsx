@@ -21,7 +21,11 @@ export function ConfirmClient() {
   const formData = useAtomValue(approvalCreateAtom);
 
   {
-    /** NOTE: 直接urlで確認画面にアクセスした際にformDataがnullの場合、新規申請入力画面にリダイレクトさせるため宣言 **/
+    /**
+     * NOTE:
+     * 直接urlで確認画面にアクセスした際にformDataがnullの場合、
+     * 新規申請入力画面にリダイレクトさせるため宣言
+     **/
   }
   useEffect(() => {
     if (formData !== null) return;

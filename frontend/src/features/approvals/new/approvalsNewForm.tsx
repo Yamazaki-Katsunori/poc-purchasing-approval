@@ -8,33 +8,23 @@ import {
   CreateApprovalRequestTypes,
 } from '@/features/approvals/schemas/approvals-new-schema';
 import { formatNumberWithComma, normalizeNumberInput } from '@/shared/numberInputs/numberInput';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useApprovalCreateAction } from '@/features/approvals/new/hooks/use-approval-create-action';
 import { useAtomValue } from 'jotai';
 import { approvalCreateAtom } from '@/store/approvals/approval-create-atom';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { toast } from 'sonner';
+import { useApprovalRedirectToast } from './hooks/use-approval-redirect-toast';
 
 export function ApprovalsNewForm() {
   const draft = useAtomValue(approvalCreateAtom);
 
   {
-    /** NOTE: formDataがnullのまま確認画面にアクセスした場合にリダイレクトされた時のEffect **/
+    /**
+     * NOTE:
+     * formDataがnullのまま確認画面にアクセスした場合に
+     * リダイレクトされた時のカスタムフック(Effect)
+     **/
   }
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const error = searchParams.get('error');
-
-    if (error !== 'missing-form-data') return;
-
-    toast.error('入力項目を入力してください', {
-      id: 'missing-form-data',
-    });
-
-    router.replace(`/approvals/new`);
-  }, [searchParams, router]);
+  useApprovalRedirectToast();
 
   const {
     register,
