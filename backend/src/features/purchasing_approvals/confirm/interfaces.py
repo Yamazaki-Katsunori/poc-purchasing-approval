@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from src.models.purchasing_approval import PurchasingApproval
 from src.models.purchasing_approval_event import PurchasingApprovalEvent
+from src.models.purchasing_approval_status import PurchasingApprovalStatus
 
 
 class IPurchasingApprovalRepository(ABC):
@@ -24,4 +25,13 @@ class IPurchasingApprovalEventRepository(ABC):
     @abstractmethod
     def create_approval_event(self, approval_event: PurchasingApprovalEvent) -> PurchasingApprovalEvent:
         """購買新規申請時のevent登録処理"""
+        raise NotImplementedError
+
+
+class IPurchasingApprovalStatusRepository(ABC):
+    """購買申請ステータスインターフェース"""
+
+    @abstractmethod
+    def find_by_submitted_code(self, query_code: str) -> PurchasingApprovalStatus | None:
+        """購買申請ステータスのSUBMITTEDを取得する処理"""
         raise NotImplementedError

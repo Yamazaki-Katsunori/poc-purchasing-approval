@@ -17,11 +17,13 @@ def test_create_approval_action_success():
     db = MagicMock()
     approval_repository = MagicMock()
     approval_event_repository = MagicMock()
+    approval_status_repository = MagicMock()
 
-    pending_status = PurchasingApprovalStatus(
+    submitted_status = PurchasingApprovalStatus(
         id=1, code=ApprovalStatusCode.SUBMITTED.value, name=ApprovalStatusCode.SUBMITTED.label
     )
-    db.scalar.return_value = pending_status
+
+    approval_status_repository.find_by_submitted_code.return_value = submitted_status
 
     created_approval = PurchasingApproval(
         id=10,
@@ -30,7 +32,7 @@ def test_create_approval_action_success():
         purchase_type="PC",
         amount=250_000,
         reason="開発業務で利用するため",
-        current_status_id=pending_status.id,
+        current_status_id=submitted_status.id,
         current_event_id=None,
     )
     approval_repository.create_approval.return_value = created_approval
@@ -40,7 +42,7 @@ def test_create_approval_action_success():
         subject_type="approval",
         subject_id=10,
         performed_by=1,
-        status_id=pending_status.id,
+        status_id=submitted_status.id,
         action=ApprovalActionState.REQUEST.value,
     )
     approval_event_repository.create_approval_event.return_value = created_event
@@ -52,7 +54,7 @@ def test_create_approval_action_success():
         purchase_type="PC",
         amount=250_000,
         reason="開発業務で利用するため",
-        current_status_id=pending_status.id,
+        current_status_id=submitted_status.id,
         current_event_id=created_event.id,
     )
     approval_repository.update_current_event_id.return_value = updated_approval
@@ -61,6 +63,7 @@ def test_create_approval_action_success():
         db=db,
         approval_repository=approval_repository,
         approval_event_repository=approval_event_repository,
+        approval_status_repository=approval_status_repository,
     )
 
     request = ConfirmApprovalRequest(
@@ -73,25 +76,27 @@ def test_create_approval_action_success():
     result = service.create_approval_action(user_id=1, data=request)
 
     assert result is updated_approval
-    db.scalar.assert_called_once()
+    approval_status_repository.find_by_submitted_code.assert_called_once()
     approval_repository.create_approval.assert_called_once()
     approval_event_repository.create_approval_event.assert_called_once()
     approval_repository.update_current_event_id.assert_called_once()
 
 
-def test_create_approval_action_raises_value_error_when_pending_status_not_found():
+def test_create_approval_action_raises_value_error_when_submitted_status_not_found():
     """異常系: PENDINGステータスが取得できない場合"""
 
     db = MagicMock()
     approval_repository = MagicMock()
     approval_event_repository = MagicMock()
+    approval_status_repository = MagicMock()
 
-    db.scalar.return_value = None
+    approval_status_repository.find_by_submitted_code.return_value = None
 
     service = CreateApprovalService(
         db=db,
         approval_repository=approval_repository,
         approval_event_repository=approval_event_repository,
+        approval_status_repository=approval_status_repository,
     )
 
     request = ConfirmApprovalRequest(
@@ -104,6 +109,7 @@ def test_create_approval_action_raises_value_error_when_pending_status_not_found
     with pytest.raises(ValueError, match="SUBMITTED status not found"):
         service.create_approval_action(user_id=1, data=request)
 
+    approval_status_repository.find_by_submitted_code.assert_called_once()
     approval_repository.create_approval.assert_not_called()
     approval_event_repository.create_approval_event.assert_not_called()
     approval_repository.update_current_event_id.assert_not_called()
@@ -115,11 +121,12 @@ def test_create_approval_action_raises_runtime_error_when_create_approval_failed
     db = MagicMock()
     approval_repository = MagicMock()
     approval_event_repository = MagicMock()
+    approval_status_repository = MagicMock()
 
-    pending_status = PurchasingApprovalStatus(
+    submitted_status = PurchasingApprovalStatus(
         id=1, code=ApprovalStatusCode.SUBMITTED.value, name=ApprovalStatusCode.SUBMITTED.label
     )
-    db.scalar.return_value = pending_status
+    db.scalar.return_value = submitted_status
 
     approval_repository.create_approval.side_effect = RuntimeError("create approval error")
 
@@ -127,6 +134,7 @@ def test_create_approval_action_raises_runtime_error_when_create_approval_failed
         db=db,
         approval_repository=approval_repository,
         approval_event_repository=approval_event_repository,
+        approval_status_repository=approval_status_repository,
     )
 
     request = ConfirmApprovalRequest(
@@ -150,11 +158,12 @@ def test_create_approval_action_raises_runtime_error_when_create_approval_event_
     db = MagicMock()
     approval_repository = MagicMock()
     approval_event_repository = MagicMock()
+    approval_status_repository = MagicMock()
 
-    pending_status = PurchasingApprovalStatus(
+    submitted_status = PurchasingApprovalStatus(
         id=1, code=ApprovalStatusCode.SUBMITTED.value, name=ApprovalStatusCode.SUBMITTED.label
     )
-    db.scalar.return_value = pending_status
+    db.scalar.return_value = submitted_status
 
     created_approval = PurchasingApproval(
         id=10,
@@ -163,7 +172,7 @@ def test_create_approval_action_raises_runtime_error_when_create_approval_event_
         purchase_type="PC",
         amount=250_000,
         reason="開発業務で利用するため",
-        current_status_id=pending_status.id,
+        current_status_id=submitted_status.id,
         current_event_id=None,
     )
     approval_repository.create_approval.return_value = created_approval
@@ -173,6 +182,7 @@ def test_create_approval_action_raises_runtime_error_when_create_approval_event_
         db=db,
         approval_repository=approval_repository,
         approval_event_repository=approval_event_repository,
+        approval_status_repository=approval_status_repository,
     )
 
     request = ConfirmApprovalRequest(

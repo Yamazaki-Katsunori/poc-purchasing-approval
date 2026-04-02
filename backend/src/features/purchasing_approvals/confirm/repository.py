@@ -1,12 +1,15 @@
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from wireup import injectable
 
 from src.features.purchasing_approvals.confirm.interfaces import (
     IPurchasingApprovalEventRepository,
     IPurchasingApprovalRepository,
+    IPurchasingApprovalStatusRepository,
 )
 from src.models.purchasing_approval import PurchasingApproval
 from src.models.purchasing_approval_event import PurchasingApprovalEvent
+from src.models.purchasing_approval_status import PurchasingApprovalStatus
 
 
 @injectable(lifetime="scoped", as_type=IPurchasingApprovalRepository)
@@ -40,3 +43,14 @@ class PurchasingApprovalEventRepository(IPurchasingApprovalEventRepository):
         self.db.add(approval_event)
         self.db.flush()
         return approval_event
+
+
+@injectable(lifetime="scoped", as_type=IPurchasingApprovalStatusRepository)
+class PurchasingApprovalStatusRepository(IPurchasingApprovalStatusRepository):
+    """購買申請ステータスを取得するRepository"""
+
+    def __init__(self, db: Session) -> None:
+        self.db = db
+
+    def find_by_submitted_code(self, query_code: str) -> PurchasingApprovalStatus | None:
+        return self.db.scalar(select(PurchasingApprovalStatus).where(PurchasingApprovalStatus.code == query_code))
