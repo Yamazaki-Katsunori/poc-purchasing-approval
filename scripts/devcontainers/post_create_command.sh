@@ -126,6 +126,7 @@ PNPM_DEPS=(
   "jotai"
   "clsx"
   "tailwind-merge"
+  "sonner"
 )
 
 PNPM_DEV_DEPS=(

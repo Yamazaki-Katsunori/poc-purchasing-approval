@@ -4,6 +4,7 @@ import './globals.css';
 import { ReactNode } from 'react';
 import AppShell from '@/features/layouts/AppShell';
 import { Providers } from './providers';
+import { Toaster } from 'sonner';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <AppShell>{children}</AppShell>
+          <Toaster position="top-center" richColors duration={4000} />
         </Providers>
       </body>
     </html>
