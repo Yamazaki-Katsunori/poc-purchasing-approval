@@ -1,6 +1,10 @@
 'use client';
 
+import { approvalCreateAtom } from '@/store/approvals/approval-create-atom';
+import { useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 /**
  * TODO:
@@ -13,5 +17,17 @@ const ApprovalsNewConfirm = dynamic(
 );
 
 export function ConfirmClient() {
+  const router = useRouter();
+  const formData = useAtomValue(approvalCreateAtom);
+
+  {
+    /** NOTE: 直接urlで確認画面にアクセスした際にformDataがnullの場合、新規申請入力画面にリダイレクトさせるため宣言 **/
+  }
+  useEffect(() => {
+    if (formData !== null) return;
+
+    router.replace('/approvals/new?error=missing-form-data');
+  }, [formData, router]);
+
   return <ApprovalsNewConfirm />;
 }

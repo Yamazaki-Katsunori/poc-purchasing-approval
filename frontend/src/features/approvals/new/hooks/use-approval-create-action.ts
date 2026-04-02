@@ -14,6 +14,7 @@ export const useApprovalCreateAction = () => {
   const onSubmit = async (data: CreateApprovalRequestTypes) => {
     await mutation.mutateAsync(data);
     setApprovalCreate(data);
+
     router.push('/approvals/new/confirm');
   };
 
