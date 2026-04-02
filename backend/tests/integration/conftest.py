@@ -31,3 +31,10 @@ def submitted_status(db_session: Session) -> PurchasingApprovalStatus:
 @pytest.fixture()
 def access_token(seed_user: User) -> str:
     return create_access_token(str(seed_user.id))
+
+
+@pytest.fixture()
+def authenticated_client(client, access_token: str):
+    client.cookies.set("access_token", access_token)
+    yield client
+    client.cookies.clear()

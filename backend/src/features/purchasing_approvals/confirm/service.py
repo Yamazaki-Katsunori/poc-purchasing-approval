@@ -1,17 +1,16 @@
 from datetime import UTC, datetime
 
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 from wireup import injectable
 
 from src.features.purchasing_approvals.confirm.interfaces import (
     IPurchasingApprovalEventRepository,
     IPurchasingApprovalRepository,
+    IPurchasingApprovalStatusRepository,
 )
 from src.features.purchasing_approvals.confirm.schemas import ConfirmApprovalRequest
 from src.models.purchasing_approval import PurchasingApproval
 from src.models.purchasing_approval_event import PurchasingApprovalEvent
-from src.models.purchasing_approval_status import PurchasingApprovalStatus
 from src.shared.enums.approval_actions_enum import ApprovalActionState
 from src.shared.enums.approval_status_enum import ApprovalStatusCode
 
@@ -23,10 +22,12 @@ class CreateApprovalService:
         db: Session,
         approval_repository: IPurchasingApprovalRepository,
         approval_event_repository: IPurchasingApprovalEventRepository,
+        approval_status_repository: IPurchasingApprovalStatusRepository,
     ) -> None:
         self.db = db
         self.approval_repository = approval_repository
         self.approval_event_repository = approval_event_repository
+        self.approval_status_repository = approval_status_repository
 
     def create_approval_action(
         self,
@@ -36,13 +37,11 @@ class CreateApprovalService:
 
         try:
             with self.db.begin():
-                pending_status = self.db.scalar(
-                    select(PurchasingApprovalStatus).where(
-                        PurchasingApprovalStatus.code == ApprovalStatusCode.SUBMITTED.value
-                    )
+                submitted_status = self.approval_status_repository.find_by_submitted_code(
+                    ApprovalStatusCode.SUBMITTED.value
                 )
 
-                if pending_status is None:
+                if submitted_status is None:
                     raise ValueError(f"{ApprovalStatusCode.SUBMITTED.value.upper()} status not found")
 
                 now = datetime.now(UTC)
@@ -52,7 +51,7 @@ class CreateApprovalService:
                     purchase_type=data.purchase_type,
                     amount=data.amount,
                     reason=data.reason,
-                    current_status_id=pending_status.id,
+                    current_status_id=submitted_status.id,
                     current_event_id=None,
                     requested_at=now,
                 )
@@ -62,7 +61,7 @@ class CreateApprovalService:
                     subject_type="approval",
                     subject_id=approval.id,
                     performed_by=user_id,
-                    status_id=pending_status.id,
+                    status_id=submitted_status.id,
                     action=ApprovalActionState.REQUEST.value,
                     comment=None,
                     event_at=now,

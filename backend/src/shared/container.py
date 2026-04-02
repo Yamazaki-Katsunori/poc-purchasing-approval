@@ -6,6 +6,7 @@ from src.features.auth.service import AuthService
 from src.features.purchasing_approvals.confirm.repository import (
     PurchasingApprovalEventRepository,
     PurchasingApprovalRepository,
+    PurchasingApprovalStatusRepository,
 )
 from src.features.purchasing_approvals.confirm.service import CreateApprovalService
 
@@ -16,6 +17,7 @@ container = wireup.create_async_container(
         AuthService,
         PurchasingApprovalRepository,
         PurchasingApprovalEventRepository,
+        PurchasingApprovalStatusRepository,
         CreateApprovalService,
     ]
 )
