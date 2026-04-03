@@ -29,7 +29,6 @@ vi.mock('@/features/approvals/confirm/guards/asserts', () => ({
 
 describe('useConfirmAction', () => {
   const pushMock = vi.fn();
-  const refreshMock = vi.fn();
   const setAtomMock = vi.fn();
   const mutateAsyncMock = vi.fn();
 
@@ -38,7 +37,6 @@ describe('useConfirmAction', () => {
 
     (useRouter as Mock).mockReturnValue({
       push: pushMock,
-      refresh: refreshMock,
     });
 
     (useSetAtom as Mock).mockReturnValue(setAtomMock);
@@ -77,7 +75,6 @@ describe('useConfirmAction', () => {
 
     // router.push / router.refresh が呼ばれる
     expect(pushMock).toHaveBeenCalledWith('/');
-    expect(refreshMock).toHaveBeenCalled();
   });
 
   it('null を渡すと assert で例外が投げられる', async () => {
@@ -95,6 +92,5 @@ describe('useConfirmAction', () => {
     expect(mutateAsyncMock).not.toHaveBeenCalled();
     expect(setAtomMock).not.toHaveBeenCalled();
     expect(pushMock).not.toHaveBeenCalled();
-    expect(refreshMock).not.toHaveBeenCalled();
   });
 });
