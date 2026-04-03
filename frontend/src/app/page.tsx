@@ -1,3 +1,4 @@
+import { ResetCreatedApprovalStateHandler } from '@/features/home/components/resetCreatedApprovalStateHandler';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui';
 import Link from 'next/link';
 
@@ -30,6 +31,7 @@ const items: ApprovalItem[] = [
 export default function Page() {
   return (
     <main>
+      <ResetCreatedApprovalStateHandler />
       <Table>
         <TableHeader>
           <TableRow>
