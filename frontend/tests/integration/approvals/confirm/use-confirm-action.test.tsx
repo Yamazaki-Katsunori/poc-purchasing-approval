@@ -26,7 +26,6 @@ vi.mock('@/features/approvals/confirm/hooks/use-confirm-approval-mutation', () =
 
 describe('useConfirmAction (integration + storage)', () => {
   const pushMock = vi.fn();
-  const refreshMock = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -54,7 +53,7 @@ describe('useConfirmAction (integration + storage)', () => {
     return { wrapper, store };
   }
 
-  it('正常系: mutation → atomクリア → router.push → refresh が実行される', async () => {
+  it('正常系: mutation → router.push が実行される', async () => {
     const { wrapper, store } = setup();
     const { result } = renderHook(() => useConfirmAction(), { wrapper });
 
@@ -77,15 +76,8 @@ describe('useConfirmAction (integration + storage)', () => {
     // ① mutation
     expect(mutateAsyncMock).toHaveBeenCalledWith(input);
 
-    // ② atom がクリアされる
-    expect(store.get(approvalCreateAtom)).toBe(null);
-
-    // ③ storage もクリアされる
-    const stored = sessionStorage.getItem('approvalCreate');
-    expect(stored === null || JSON.parse(stored) === null).toBe(true);
-
-    // ④ router.push
-    expect(pushMock).toHaveBeenCalledWith('/');
+    // ② router.push
+    expect(pushMock).toHaveBeenCalledWith('/?created=true');
   });
 
   it('異常系①: assertで落ちる場合、何も実行されない', async () => {
@@ -99,7 +91,6 @@ describe('useConfirmAction (integration + storage)', () => {
     expect(mutateAsyncMock).not.toHaveBeenCalled();
     expect(store.get(approvalCreateAtom)).toBe(null);
     expect(pushMock).not.toHaveBeenCalled();
-    expect(refreshMock).not.toHaveBeenCalled();
   });
 
   it('異常系②: mutation失敗時、後続処理が実行されない', async () => {
@@ -126,6 +117,5 @@ describe('useConfirmAction (integration + storage)', () => {
     // ❌ それ以降は実行されない
     expect(store.get(approvalCreateAtom)).toEqual(input); // クリアされてない
     expect(pushMock).not.toHaveBeenCalled();
-    expect(refreshMock).not.toHaveBeenCalled();
   });
 });
