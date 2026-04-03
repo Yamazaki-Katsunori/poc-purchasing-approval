@@ -37,8 +37,24 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: 'setup-approvals-auth',
+      testMatch: /tests\/e2e\/setup\/approvals-auth\.setup\.ts/,
+    },
+
+    {
+      name: 'chromium-login',
       use: { ...devices['Desktop Chrome'] },
+      testMatch: /tests\/e2e\/auth\/*\.spec\.ts/,
+    },
+
+    {
+      name: 'chromium-approvals-authenticated',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/approvals-user.json',
+      },
+      dependencies: ['setup-approvals-auth'],
+      testMatch: /tests\/e2e\/approvals\/.*\.spec\.ts/,
     },
 
     // {

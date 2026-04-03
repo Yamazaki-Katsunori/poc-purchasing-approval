@@ -3,7 +3,8 @@
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { APPROVAL_REDIRECT_ERRORS, APPROVAL_TOAST_IDS } from '@/shared/constants/approvals/redirect-errors';
+import { APPROVAL_REDIRECT_ERRORS } from '@/shared/constants/approvals/redirect-errors';
+import { APPROVAL_TOAST_IDS } from '@/shared/constants/approvals/toast-successes';
 
 export function useApprovalRedirectToast() {
   const router = useRouter();
