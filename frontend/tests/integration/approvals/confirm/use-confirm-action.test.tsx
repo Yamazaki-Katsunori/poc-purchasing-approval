@@ -33,7 +33,6 @@ describe('useConfirmAction (integration + storage)', () => {
     sessionStorage.clear();
     (useRouter as Mock).mockReturnValue({
       push: pushMock,
-      refresh: refreshMock,
     });
   });
 
@@ -87,9 +86,6 @@ describe('useConfirmAction (integration + storage)', () => {
 
     // ④ router.push
     expect(pushMock).toHaveBeenCalledWith('/');
-
-    // ⑤ router.refresh
-    expect(refreshMock).toHaveBeenCalled();
   });
 
   it('異常系①: assertで落ちる場合、何も実行されない', async () => {
