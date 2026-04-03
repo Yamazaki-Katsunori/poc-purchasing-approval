@@ -29,8 +29,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "24"
-          cache: "pnpm"
-          cache-dependency-path: frontend/pnpm-lock.yaml
 
       # - name: Install deps
       #   run: pnpm install --frozen-lockfile
@@ -62,11 +60,11 @@ jobs:
 
       - name: Run migrations
         working-directory: .
-        run: docker compose -f compose.ci.be.yaml --env-file .env.ci exec -T backend uv run alembic upgrade head
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci exec -T backend uv run alembic upgrade head
 
       - name: Seed data
         working-directory: .
-        run: docker compose -f compose.ci.be.yaml --env-file .env.ci exec -T backend uv run python -m src.scripts.seeds.run_all_seeds
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci exec -T backend uv run python -m src.scripts.seeds.run_all_seeds
 
       - name: Wait for app
         working-directory: .
@@ -77,7 +75,7 @@ jobs:
 
       - name: Run Playwright
         working-directory: .
-        run: docker compose -f compose.ci.be.yaml --env-file .env.ci exec -T frontend pnpm test:e2e
+        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci exec -T frontend pnpm test:e2e
 
       - name: Show container logs on failure
         if: failure()
