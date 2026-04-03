@@ -3,7 +3,6 @@ import { renderHook, act } from '@testing-library/react';
 import { useConfirmAction } from './use-confirm-action';
 import { useConfirmApprovalMutation } from './use-confirm-approval-mutation';
 import { useRouter } from 'next/navigation';
-import { useSetAtom } from 'jotai';
 import { CreateApprovalRequestTypes } from '@/features/approvals/schemas/approvals-new-schema';
 import { assertCreateApprovalRequestData } from '@/features/approvals/confirm/guards/asserts';
 import { AppError } from '@/shared/error/appError';
@@ -29,7 +28,6 @@ vi.mock('@/features/approvals/confirm/guards/asserts', () => ({
 
 describe('useConfirmAction', () => {
   const pushMock = vi.fn();
-  const setAtomMock = vi.fn();
   const mutateAsyncMock = vi.fn();
 
   beforeEach(() => {
@@ -39,8 +37,6 @@ describe('useConfirmAction', () => {
       push: pushMock,
     });
 
-    (useSetAtom as Mock).mockReturnValue(setAtomMock);
-
     (useConfirmApprovalMutation as Mock).mockReturnValue({
       mutateAsync: mutateAsyncMock,
       isPending: false,
@@ -48,7 +44,7 @@ describe('useConfirmAction', () => {
     });
   });
 
-  it('正常系: assert → mutation → atom → router が順に呼ばれる', async () => {
+  it('正常系: assert → mutation → router が順に呼ばれる', async () => {
     const { result } = renderHook(() => useConfirmAction());
 
     const input: CreateApprovalRequestTypes = {
@@ -70,11 +66,8 @@ describe('useConfirmAction', () => {
     // mutation が呼ばれる
     expect(mutateAsyncMock).toHaveBeenCalledWith(input);
 
-    // atom が null にセットされる
-    expect(setAtomMock).toHaveBeenCalledWith(null);
-
     // router.push / router.refresh が呼ばれる
-    expect(pushMock).toHaveBeenCalledWith('/');
+    expect(pushMock).toHaveBeenCalledWith('/?created=true');
   });
 
   it('null を渡すと assert で例外が投げられる', async () => {
@@ -88,9 +81,8 @@ describe('useConfirmAction', () => {
       await expect(result.current.onSubmit(null)).rejects.toThrow(AppError);
     });
 
-    // mutation / atom / router は呼ばれない
+    // mutation / router は呼ばれない
     expect(mutateAsyncMock).not.toHaveBeenCalled();
-    expect(setAtomMock).not.toHaveBeenCalled();
     expect(pushMock).not.toHaveBeenCalled();
   });
 });
