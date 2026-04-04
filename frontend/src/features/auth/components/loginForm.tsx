@@ -2,6 +2,7 @@
 
 import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle, Input } from '@/ui';
 import { useLoginForm } from '../hooks/login-form-hook';
+import { GlobalLoadingOverlay } from '@/shared/components/global-loading-overlay';
 
 export function LoginForm() {
   const {
@@ -12,6 +13,8 @@ export function LoginForm() {
     isPending,
     serverError,
   } = useLoginForm();
+
+  if (isPending) return <GlobalLoadingOverlay open={isPending} message="データを読み込んでいます..." />;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
