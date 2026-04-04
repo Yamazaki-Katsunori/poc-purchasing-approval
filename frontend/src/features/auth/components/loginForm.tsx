@@ -3,6 +3,8 @@
 import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle, Input } from '@/ui';
 import { useLoginForm } from '../hooks/login-form-hook';
 import { GlobalLoadingOverlay } from '@/shared/components/global-loading-overlay';
+import { PageLoading } from '@/shared/components/page-loading';
+import { ButtonLoadingContent } from '@/shared/components/button-loading-content';
 
 export function LoginForm() {
   const {
@@ -14,7 +16,11 @@ export function LoginForm() {
     serverError,
   } = useLoginForm();
 
-  if (isPending) return <GlobalLoadingOverlay open={isPending} message="データを読み込んでいます..." />;
+  {
+    /** debug **/
+  }
+  // if (isPending) return <GlobalLoadingOverlay open={isPending} message="データを読み込んでいます..." />;
+  if (isPending) return <PageLoading message="データ読み込み中..." />;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -52,7 +58,7 @@ export function LoginForm() {
         </CardContent>
         <CardFooter className="flex justify-end-safe">
           <Button type="submit" className="" variant="primary" disabled={isPending}>
-            {isPending ? 'ログイン中...' : 'ログイン'}
+            {isPending ? <ButtonLoadingContent text="ログイン中..." /> : 'ログイン'}
           </Button>
         </CardFooter>
       </Card>
