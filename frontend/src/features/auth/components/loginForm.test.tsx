@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { LoginForm } from './loginForm';
+import type { SubmitEvent } from 'react';
 
 const mockRegister = vi.fn((name: string) => ({
   name,
@@ -11,7 +12,7 @@ const mockRegister = vi.fn((name: string) => ({
 }));
 
 const mockOnSubmit = vi.fn();
-const mockSubmitHandler = vi.fn(async (e?: React.FormEvent<HTMLFormElement>) => {
+const mockSubmitHandler = vi.fn(async (e?: SubmitEvent<HTMLFormElement>) => {
   e?.preventDefault?.();
 });
 
@@ -148,7 +149,7 @@ describe('LoginForm', () => {
     expect(screen.getByText('メールアドレスまたはパスワードが正しくありません。')).toBeInTheDocument();
   });
 
-  it('isPending=true のとき、ボタンを disabled にして文言を変更する', () => {
+  it('isPending=true のとき、ローディングアニメーション"読み込み中..."が表示される', () => {
     mockUseLoginForm.mockReturnValue({
       register: mockRegister,
       handleSubmit: mockHandleSubmit,
@@ -163,7 +164,6 @@ describe('LoginForm', () => {
 
     render(<LoginForm />);
 
-    const button = screen.getByRole('button', { name: 'ログイン中...' });
-    expect(button).toBeDisabled();
+    expect(screen.getByText('データを読み込んでいます...')).toBeInTheDocument();
   });
 });

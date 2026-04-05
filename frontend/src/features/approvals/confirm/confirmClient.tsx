@@ -1,5 +1,6 @@
 'use client';
 
+import { APPROVAL_REDIRECT_ERRORS } from '@/shared/constants/approvals/redirect-errors';
 import { approvalCreateAtom } from '@/store/approvals/approval-create-atom';
 import { useAtomValue } from 'jotai';
 import dynamic from 'next/dynamic';
@@ -30,7 +31,7 @@ export function ConfirmClient() {
   useEffect(() => {
     if (formData !== null) return;
 
-    router.replace('/approvals/new?error=missing-form-data');
+    router.replace(`/approvals/new?error=${APPROVAL_REDIRECT_ERRORS.MISSING_FORM_DATA}`);
   }, [formData, router]);
 
   return <ApprovalsNewConfirm />;
