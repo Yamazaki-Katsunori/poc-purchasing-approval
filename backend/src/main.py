@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.features.auth.endpoint import router as auth_router
 from src.features.purchasing_approvals.confirm.endpoint import router as confirm_approval_router
+from src.features.purchasing_approvals.list.endpoint import router as list_approval_router
 from src.features.purchasing_approvals.new.endpoint import router as new_approval_router
 from src.shared.container import container
 
@@ -27,6 +28,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(new_approval_router)
 app.include_router(confirm_approval_router)
+app.include_router(list_approval_router)
 
 wireup.integration.fastapi.setup(container, app)
 

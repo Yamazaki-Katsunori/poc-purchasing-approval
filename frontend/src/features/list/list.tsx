@@ -3,35 +3,18 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui';
 import Link from 'next/link';
 import { useApprovalsQuery } from './hooks/use-approvals-query';
-
-// demo data
-type ApprovalItem = {
-  id: number;
-  requestNo: string;
-  title: string;
-  applicantName: string;
-  status: string;
-};
-
-const items: ApprovalItem[] = [
-  {
-    id: 1,
-    requestNo: 'APP-001',
-    title: 'PC購入申請',
-    applicantName: '山田 太郎',
-    status: '申請中',
-  },
-  {
-    id: 2,
-    requestNo: 'APP-002',
-    title: 'モニター購入申請',
-    applicantName: '佐藤 花子',
-    status: '承認済み',
-  },
-];
+import { PageLoading } from '@/shared/components/page-loading';
+import { ApprovalListItemTypes } from './schemas/approvals-list-response-schema';
 
 export function List() {
-  const { data, error, isError, isPending, isFetching } = useApprovalsQuery();
+  const { data, error, isError, isPending } = useApprovalsQuery();
+
+  const items = data?.items;
+
+  // スケルトンでローディング表示
+  if (isPending) return <PageLoading message="データ取得中..." />;
+
+  if (isError) return <div>{error.message}</div>;
 
   return (
     <Table>
@@ -46,7 +29,7 @@ export function List() {
       </TableHeader>
 
       <TableBody>
-        {items.map((item: ApprovalItem) => (
+        {items?.map((item: ApprovalListItemTypes) => (
           <TableRow key={item.id}>
             <TableCell>
               <Link
@@ -54,12 +37,13 @@ export function List() {
                 href={`/approvals/:${item.id}`}
                 className="font-medium text-blue-600 underline-offset-2 hover:underline hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                {item.requestNo}
+                {item.id}
               </Link>
             </TableCell>
             <TableCell>{item.title}</TableCell>
-            <TableCell>{item.applicantName}</TableCell>
-            <TableCell>{item.status}</TableCell>
+            <TableCell>{item.purchaseType}</TableCell>
+            <TableCell>{item.amount}</TableCell>
+            <TableCell>{item.created_at}</TableCell>
           </TableRow>
         ))}
       </TableBody>
