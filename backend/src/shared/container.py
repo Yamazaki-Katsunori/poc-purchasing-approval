@@ -9,6 +9,8 @@ from src.features.purchasing_approvals.confirm.repository import (
     PurchasingApprovalStatusRepository,
 )
 from src.features.purchasing_approvals.confirm.service import CreateApprovalService
+from src.features.purchasing_approvals.list.repository import ApprovalListRepository
+from src.features.purchasing_approvals.list.service import PurchasingApprovalListService
 
 container = wireup.create_async_container(
     injectables=[
@@ -19,5 +21,7 @@ container = wireup.create_async_container(
         PurchasingApprovalEventRepository,
         PurchasingApprovalStatusRepository,
         CreateApprovalService,
+        ApprovalListRepository,
+        PurchasingApprovalListService,
     ]
 )

@@ -6,10 +6,12 @@ export const ApprovalListItemSchema = z.object({
   purchaseType: z.string(),
   amount: z.number(),
   status: z.string(),
-  appliedAt: z.string(),
+  created_at: z.string(),
 });
 
-export const ApprovalListResponseSchema = z.array(ApprovalListItemSchema);
+export const ApprovalListResponseSchema = z.object({
+  items: z.array(ApprovalListItemSchema),
+});
 
 export type ApprovalListItemTypes = z.infer<typeof ApprovalListItemSchema>;
 export type ApprovalListResponseTypes = z.infer<typeof ApprovalListResponseSchema>;
