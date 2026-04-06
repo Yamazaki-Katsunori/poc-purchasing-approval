@@ -2,6 +2,7 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/ui';
 import Link from 'next/link';
+import { useApprovalsQuery } from './hooks/use-approvals-query';
 
 // demo data
 type ApprovalItem = {
@@ -30,6 +31,8 @@ const items: ApprovalItem[] = [
 ];
 
 export function List() {
+  const { data, error, isError, isPending, isFetching } = useApprovalsQuery();
+
   return (
     <Table>
       <TableHeader>
@@ -38,6 +41,7 @@ export function List() {
           <TableHead>件名</TableHead>
           <TableHead>申請者</TableHead>
           <TableHead>ステータス</TableHead>
+          <TableHead>作成日時</TableHead>
         </TableRow>
       </TableHeader>
 
