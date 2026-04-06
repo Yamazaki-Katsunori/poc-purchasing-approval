@@ -21,7 +21,7 @@ export function GlobalLoadingOverlay({
     <Overlay open={open}>
       <div
         className={cn(
-          'rounded-2xl border bg-background px-6 py-4 shadow-lg',
+          'rounded-2xl border bg-background bg-paper px-6 py-4 shadow-lg',
           'inline-flex items-center gap-3',
           className,
         )}
