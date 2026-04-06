@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from wireup import injectable
 
 from src.features.purchasing_approvals.list.interfaces import IApprovalListRepository
@@ -14,5 +14,9 @@ class ApprovalListRepository(IApprovalListRepository):
         self.db = db
 
     def get_approval_list(self) -> list[PurchasingApproval]:
-        stmt = select(PurchasingApproval).order_by(PurchasingApproval.created_at.desc())
+        stmt = (
+            select(PurchasingApproval)
+            .options(joinedload(PurchasingApproval.user), joinedload(PurchasingApproval.current_status))
+            .order_by(PurchasingApproval.created_at.desc())
+        )
         return list(self.db.scalars(stmt).all())

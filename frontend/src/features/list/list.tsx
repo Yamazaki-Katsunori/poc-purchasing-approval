@@ -11,7 +11,6 @@ export function List() {
 
   const items = data?.items;
 
-  // スケルトンでローディング表示
   if (isPending) return <PageLoading message="データ取得中..." />;
 
   if (isError) return <div>{error.message}</div>;
@@ -24,7 +23,9 @@ export function List() {
           <TableHead>件名</TableHead>
           <TableHead>申請者</TableHead>
           <TableHead>ステータス</TableHead>
+          <TableHead>申請日時</TableHead>
           <TableHead>作成日時</TableHead>
+          <TableHead>承認日時</TableHead>
         </TableRow>
       </TableHeader>
 
@@ -41,9 +42,11 @@ export function List() {
               </Link>
             </TableCell>
             <TableCell>{item.title}</TableCell>
-            <TableCell>{item.purchaseType}</TableCell>
-            <TableCell>{item.amount}</TableCell>
+            <TableCell>{item.approval_user}</TableCell>
+            <TableCell>{item.approval_status}</TableCell>
+            <TableCell>{item.requested_at ?? null}</TableCell>
             <TableCell>{item.created_at}</TableCell>
+            <TableCell>{item.approved_at ?? null}</TableCell>
           </TableRow>
         ))}
       </TableBody>

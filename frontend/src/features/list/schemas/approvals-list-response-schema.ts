@@ -3,10 +3,11 @@ import z from 'zod';
 export const ApprovalListItemSchema = z.object({
   id: z.number(),
   title: z.string(),
-  purchaseType: z.string(),
-  amount: z.number(),
-  status: z.string(),
+  approval_user: z.string(),
+  approval_status: z.string(),
+  requested_at: z.string().optional(),
   created_at: z.string(),
+  approved_at: z.string().optional(),
 });
 
 export const ApprovalListResponseSchema = z.object({

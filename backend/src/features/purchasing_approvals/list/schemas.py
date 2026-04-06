@@ -10,8 +10,11 @@ class ApprovalListItemResponse(BaseModel):
 
     id: int
     title: str
-    amount: int
+    approval_user: str
+    approval_status: str
+    requested_at: datetime | None
     created_at: datetime
+    approved_at: datetime | None
 
 
 class ApprovalListResponse(BaseModel):
