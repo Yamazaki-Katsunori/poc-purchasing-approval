@@ -6,5 +6,6 @@ export function useApprovalsQuery() {
   return useQuery<ApprovalListResponseTypes>({
     queryKey: ['get', 'approvals'],
     queryFn: () => getApprovals(),
+    retry: false,
   });
 }
