@@ -14,7 +14,13 @@ export function List() {
 
   if (isPending) return <PageLoading message="データ取得中..." />;
 
-  if (isError) return <div>{error.message}</div>;
+  if (isError)
+    return (
+      <div>
+        <p className="text-red-500">申請データの取得に失敗しました</p>
+        <p className="text-red-500">{`詳細: ${error.message}`}</p>
+      </div>
+    );
 
   return (
     <Table className="min-w-295">
