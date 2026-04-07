@@ -6,6 +6,7 @@ import { useApprovalsQuery } from './hooks/use-approvals-query';
 import { PageLoading } from '@/shared/components/page-loading';
 import { ApprovalListItemTypes } from './schemas/approvals-list-response-schema';
 import { formatJapaneseDateTime } from '@/shared/formatter/format-datetime';
+import { ApprovalListEmpty } from './components/list-empty';
 
 export function List() {
   const { data, error, isError, isPending } = useApprovalsQuery();
@@ -21,6 +22,8 @@ export function List() {
         <p className="text-red-500">{`詳細: ${error.message}`}</p>
       </div>
     );
+
+  if (!items || items.length === 0) return <ApprovalListEmpty />;
 
   return (
     <Table className="min-w-295">
