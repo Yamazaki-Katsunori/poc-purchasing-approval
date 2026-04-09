@@ -12,4 +12,7 @@ def get_approval_list(
     service: Injected[PurchasingApprovalListService], params: ApprovalListQueryParams = Depends()
 ) -> ApprovalListResponse:
 
+    print(f"params.page: {type(params.page)}")
+    print(f"params.per_page: {type(params.per_page)}")
+
     return service.execute(query_params=params)
