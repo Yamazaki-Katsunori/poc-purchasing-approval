@@ -19,6 +19,15 @@ export function List() {
   const items = data?.items;
   const pagination = data?.pagination;
 
+  const handlePrevPage = () => {
+    setPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    if (!data?.pagination.has_next) return;
+    setPage((prev) => prev + 1);
+  };
+
   if (isPending) return <PageLoading message="データ取得中..." />;
 
   if (isError)
@@ -73,8 +82,8 @@ export function List() {
         totalPages={pagination?.total_pages ?? 0}
         hasPrev={pagination?.has_prev ?? false}
         hasNext={pagination?.has_next ?? false}
-        onPrev={() => console.log('click on prev')}
-        onNext={() => console.log('click on next')}
+        onPrev={handlePrevPage}
+        onNext={handleNextPage}
         total={pagination?.total ?? 0}
       />
     </>
