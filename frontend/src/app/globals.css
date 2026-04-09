@@ -12,6 +12,10 @@
 
   /* 生成り寄り（紙） */
   --color-paper: oklch(0.98 0.01 95);
+
+  /* 暫定的に定義した accent */
+  --color-accent: oklch(0.97 0.01 145);
+  --color-accent-foreground: oklch(0.25 0.02 145);
 }
 
 /* =========================
@@ -78,6 +82,16 @@
   .ui-btn--danger {
     @apply bg-red-600 text-white hover:bg-red-700
            focus:ring-red-500;
+  }
+
+  .ui-btn--ghost {
+    @apply hover:bg-accent hover:text-accent-foreground;
+  }
+
+  .ui-btn--outline {
+    @apply border border-brand-600/30 bg-white text-brand-800
+         hover:bg-accent hover:text-brand-800
+         focus:ring-brand-600;
   }
 
   .ui-btn--sm {

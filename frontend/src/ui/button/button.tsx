@@ -4,7 +4,7 @@ import { cn } from '@/shared/cn';
 import { ComponentPropsWithoutRef } from 'react';
 
 type ButtonProps = ComponentPropsWithoutRef<'button'> & {
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline';
   size?: 'sm' | 'md';
   isLoading?: boolean;
 };
@@ -25,6 +25,8 @@ export function Button({
         variant === 'primary' && 'ui-btn--primary',
         variant === 'secondary' && 'ui-btn--secondary',
         variant === 'danger' && 'ui-btn--danger',
+        variant === 'ghost' && 'ui-btn--ghost',
+        variant === 'outline' && 'ui-btn--outline',
         size === 'sm' && 'ui-btn--sm',
         size === 'md' && 'ui-btn--md',
         className,
