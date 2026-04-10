@@ -77,8 +77,6 @@ def test_execute_returns_paginated_response() -> None:
     params = ApprovalListQueryParams(page=1, per_page=10)
     result = service.execute(query_params=params)
 
-    print(f"repository.find_all_args: {repository.find_all_args}")
-
     assert repository.find_all_args == (0, 10)
 
     assert len(result.items) == 2
