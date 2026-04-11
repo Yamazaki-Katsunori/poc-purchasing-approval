@@ -6,8 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from src.db.config import build_postgresql_database_url
-from src.db.session import make_db_session
 from src.main import app
+from src.shared.container import container
 
 engine = create_engine(
     url=build_postgresql_database_url(),
@@ -25,18 +25,25 @@ TestingSessionLocal = sessionmaker(
 
 @pytest.fixture()
 def db_session() -> Iterator[Session]:
-    with TestingSessionLocal() as session:
+    """testで利用するdb_session
+    終了時に rollback / session & connectionを終了する
+    """
+
+    connection = engine.connect()
+    transaction = connection.begin()
+    session = TestingSessionLocal(bind=connection)
+
+    try:
         yield session
+    finally:
+        session.close()
+        transaction.rollback()
+        connection.close()
 
 
 @pytest.fixture(autouse=True)
 def client(db_session: Session) -> Iterator[TestClient]:
-    def override_make_db_session() -> Iterator[Session]:
-        yield db_session
-
-    app.dependency_overrides[make_db_session] = override_make_db_session
-
-    with TestClient(app) as test_client:
-        yield test_client
-
-    app.dependency_overrides.clear()
+    """WireUpDIコンテナのSessionをテスト用のSessionに差し替える"""
+    with container.override.injectable(target=Session, new=db_session):
+        with TestClient(app) as test_client:
+            yield test_client
