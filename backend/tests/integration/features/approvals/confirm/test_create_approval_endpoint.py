@@ -7,7 +7,9 @@ from src.models.purchasing_approval import PurchasingApproval
 from src.models.purchasing_approval_event import PurchasingApprovalEvent
 
 
-def test_create_approval_success(db_session, seed_user, submitted_status, authenticated_client):
+def test_create_approval_success(
+    db_session, seed_user, submitted_status, authenticated_client, cleanup_approval_tables
+):
     """正常系: 購買申請新規登録処理の成功テスト"""
 
     payload = {
