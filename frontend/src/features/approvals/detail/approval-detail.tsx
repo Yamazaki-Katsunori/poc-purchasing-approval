@@ -2,13 +2,24 @@
 
 import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/ui';
 import { DetailRow } from './componetns/detailRow';
+import { useGetApprovalDetail } from './hooks/use-get-approval-detail';
+import { PageLoading } from '@/shared/components/page-loading';
 
-export function ApprovalDetail() {
+type ApprovalDetailProps = {
+  id: string;
+};
+
+export function ApprovalDetail({ id }: ApprovalDetailProps) {
+  const { data, isPending, isError, error } = useGetApprovalDetail(id);
+
+  // NOTE: 取得中はスケルトン
+  //if (isPending) return <PageLoading message="取得中..." />
+
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle>申請確認画面</CardTitle>
+          <CardTitle>{`申請詳細画面 ID: ${id}`}</CardTitle>
         </CardHeader>
 
         <CardContent>
