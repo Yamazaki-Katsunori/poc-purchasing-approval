@@ -8,7 +8,7 @@ export function ApprovalDetail() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>購買新規申請確認</CardTitle>
+          <CardTitle>申請確認画面</CardTitle>
         </CardHeader>
 
         <CardContent>
