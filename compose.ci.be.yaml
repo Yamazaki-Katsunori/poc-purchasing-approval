@@ -1,17 +1,15 @@
 services:
   db:
     image: postgres:18
-    env_file:
-      - .env.ci
     environment:
-      POSTGRES_DB: ${DB_DATABASE:-app}
-      POSTGRES_USER: ${DB_USERNAME:-app}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-app}
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${DB_USERNAME:-app} -d ${DB_DATABASE:-app} -h db -p 5432",
+          "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE} -h db -p 5432",
         ]
       interval: 5s
       timeout: 3s
@@ -25,15 +23,13 @@ services:
       dockerfile: docker/services/workspace/Dockerfile
       target: ci-backend
     working_dir: /workspaces/app/backend
-    env_file:
-      - .env.ci
     environment:
-      DB_CONNECTION: ${DB_CONNECTION:-pgsql}
-      DB_HOST: ${DB_HOST:-db}
-      DB_PORT: ${DB_PORT:-5432}
-      DB_DATABASE: ${DB_DATABASE:-app}
-      DB_USERNAME: ${DB_USERNAME:-app}
-      DB_PASSWORD: ${DB_PASSWORD:-app}
+      DB_CONNECTION: ${DB_CONNECTION}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
     depends_on:
       db:
         condition: service_healthy
