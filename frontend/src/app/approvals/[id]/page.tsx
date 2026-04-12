@@ -1,3 +1,9 @@
+import { ApprovalDetail } from '@/features/approvals/detail/approval-detail';
+
 export default function Page() {
-  return <main>this is Approval Detail Page!!</main>;
+  return (
+    <main>
+      <ApprovalDetail />
+    </main>
+  );
 }

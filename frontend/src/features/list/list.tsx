@@ -61,7 +61,7 @@ export function List() {
               <TableCell className="text-center">
                 <Link
                   key={item.id}
-                  href={`/approvals/:${item.id}`}
+                  href={`/approvals/${item.id}`}
                   className="font-medium text-blue-600 underline-offset-2 hover:underline hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   {item.id}
