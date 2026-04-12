@@ -46,11 +46,11 @@ jobs:
 
       - name: Start containers
         working-directory: .
-        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci up -d --build
+        run: docker compose -f compose.ci.e2e.yaml up -d --build
 
       - name: Show container status
         working-directory: .
-        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci ps -a
+        run: docker compose -f compose.ci.e2e.yaml ps -a
 
       # - name: Show container logs
       #   run: |
