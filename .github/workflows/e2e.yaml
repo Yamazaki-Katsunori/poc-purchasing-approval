@@ -13,6 +13,14 @@ jobs:
   playwright:
     name: playwright e2e
     runs-on: ubuntu-latest
+    env:
+      DB_CONNECTION: ${{secrets.DB_CONNECTION}}
+      DB_HOST: ${{secrets.DB_HOST}}
+      DB_PORT: ${{secrets.DB_PORT}}
+      DB_DATABASE: ${{secrets.DB_DATABASE}}
+      DB_USERNAME: ${{secrets.DB_USERNAME}}
+      DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+      WEB_PORT: ${{secrets.WEB_PORT}}
     defaults:
       run:
         working-directory: frontend
@@ -60,11 +68,11 @@ jobs:
 
       - name: Run migrations
         working-directory: .
-        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci exec -T backend uv run alembic upgrade head
+        run: docker compose -f compose.ci.e2e.yaml exec -T backend uv run alembic upgrade head
 
       - name: Seed data
         working-directory: .
-        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci exec -T backend uv run python -m src.scripts.seeds.run_all_seeds
+        run: docker compose -f compose.ci.e2e.yaml exec -T backend uv run python -m src.scripts.seeds.run_all_seeds
 
       - name: Wait for app
         working-directory: .
@@ -75,14 +83,14 @@ jobs:
 
       - name: Run Playwright
         working-directory: .
-        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci exec -T frontend pnpm test:e2e
+        run: docker compose -f compose.ci.e2e.yaml exec -T frontend pnpm test:e2e
 
       - name: Show container logs on failure
         if: failure()
         working-directory: .
-        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci logs --no-color
+        run: docker compose -f compose.ci.e2e.yaml logs --no-color
 
       - name: Stop containers
         if: always()
         working-directory: .
-        run: docker compose -f compose.ci.e2e.yaml --env-file .env.ci down -v
+        run: docker compose -f compose.ci.e2e.yaml down -v

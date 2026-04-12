@@ -1,12 +1,10 @@
 services:
   db:
     image: postgres:18
-    env_file:
-      - .env.ci
     environment:
-      POSTGRES_DB: ${DB_DATABASE:-app}
-      POSTGRES_USER: ${DB_USERNAME:-app}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-app}
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
       test:
         [
@@ -25,15 +23,13 @@ services:
       dockerfile: docker/services/workspace/Dockerfile
       target: ci-backend
     working_dir: /workspaces/app/backend
-    env_file:
-      - .env.ci
     environment:
-      DB_CONNECTION: ${DB_CONNECTION:-pgsql}
-      DB_HOST: ${DB_HOST:-db}
-      DB_PORT: ${DB_PORT:-5432}
-      DB_DATABASE: ${DB_DATABASE:-app}
-      DB_USERNAME: ${DB_USERNAME:-app}
-      DB_PASSWORD: ${DB_PASSWORD:-app}
+      DB_CONNECTION: ${DB_CONNECTION}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
     # volumes:
     #   - .:/workspaces/app
     depends_on:
@@ -47,8 +43,6 @@ services:
       dockerfile: docker/services/workspace/Dockerfile
       target: ci-frontend
     working_dir: /workspaces/app/frontend
-    env_file:
-      - .env.ci
     # volumes:
     #   - .:/workspaces/app
     depends_on:
