@@ -11,3 +11,4 @@ export * from './table';
 export * from './skeleton';
 export * from './overlay';
 export * from './spinner';
+export * from './badge';

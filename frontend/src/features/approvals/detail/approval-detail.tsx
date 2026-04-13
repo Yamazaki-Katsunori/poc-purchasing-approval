@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/ui';
+import { Badge, Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/ui';
 import { DetailRow } from './componetns/detailRow';
 import { useGetApprovalDetail } from './hooks/use-get-approval-detail';
 import { PageLoading } from '@/shared/components/page-loading';
@@ -33,51 +33,20 @@ export function ApprovalDetail({ id }: ApprovalDetailProps) {
         </CardHeader>
 
         {/* ここに申請情報のうち 申請者、申請日,承認日,作成日, 申請ステータス,*/}
-        <CardContent className="">
-          <CardTitle className="">申請ステータス</CardTitle>
-          <div>
-            <span>作成者:</span>
-            <div>{data.user.name}</div>
+        <CardContent className="space-y-3">
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="warning">{`ステータス: ${approval_status?.name}`}</Badge>
+            <Badge variant="outline">{`最終操作: ${approval_event?.action}`}</Badge>
+            <Badge variant="success">{`作成者: ${data.user.name}`}</Badge>
+            <Badge variant="outline">{`作成者権限: ${approval_user_roles}`}</Badge>
+            <Badge variant="success">{`最終操作者: ${approval_event_perfomer?.name}`}</Badge>
+            <Badge variant="outline">{`最終操作者権限: ${performer_roles}`}</Badge>
           </div>
 
-          <div>
-            <span>作成者権限:</span>
-            <div>{approval_user_roles}</div>
-          </div>
-
-          <div>
-            <span>最終実行者:</span>
-            <div>{approval_event_perfomer?.name ?? ''}</div>
-          </div>
-
-          <div>
-            <span>最終実行者権限:</span>
-            <div>{performer_roles}</div>
-          </div>
-
-          <div>
-            <span>最終申請ステータス:</span>
-            <div>{approval_status?.name}</div>
-          </div>
-
-          <div>
-            <span>最終実行ステータス</span>
-            <div>{approval_event?.action}</div>
-          </div>
-
-          <div>
-            <span>承認日:</span>
-            <div>{formatJapaneseDateTime(data.requested_at)}</div>
-          </div>
-
-          <div>
-            <span>作成日:</span>
-            <div>{formatJapaneseDateTime(data.created_at)}</div>
-          </div>
-
-          <div>
-            <span>申請日:</span>
-            <div>{formatJapaneseDateTime(data.approved_at)}</div>
+          <div className="grid gap-2 text-sm  sm:grid-cols-2">
+            <p>{`承認日: ${formatJapaneseDateTime(data.requested_at)}`}</p>
+            <p>{`作成日: ${formatJapaneseDateTime(data.created_at)}`}</p>
+            <p>{`申請日: ${formatJapaneseDateTime(data.approved_at)}`}</p>
           </div>
         </CardContent>
 
