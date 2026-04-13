@@ -14,21 +14,6 @@ class ApprovalDetailStatusResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
-class ApprovalDetailEventResponse(BaseModel):
-    """申請データに紐づいている申請イベントのレスポンスモデル"""
-
-    id: int
-    subject_type: str
-    subject_id: int
-    performed_by: int | None
-    status_id: int
-    action: str
-    comment: str | None
-    event_at: datetime
-
-    model_config = ConfigDict(from_attributes=True)
-
-
 class ApprovalDetailUserRoleResponse(BaseModel):
     """ユーザーに紐づくRoleレスポンスモデル"""
 
@@ -44,6 +29,32 @@ class ApprovalDetailUserResponse(BaseModel):
     id: int
     name: str
     roles: list[ApprovalDetailUserRoleResponse] = []
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ApprovalDetailEventPerformerResponse(BaseModel):
+    """申請データに紐づいている申請イベントのイベント実行者情報のレスポンスモデル"""
+
+    id: int
+    name: str
+    roles: list[ApprovalDetailUserRoleResponse] = []
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ApprovalDetailEventResponse(BaseModel):
+    """申請データに紐づいている申請イベントのレスポンスモデル"""
+
+    id: int
+    subject_type: str
+    subject_id: int
+    performed_by: int | None
+    status_id: int
+    action: str
+    comment: str | None
+    event_at: datetime
+    performer: ApprovalDetailEventPerformerResponse | None
 
     model_config = ConfigDict(from_attributes=True)
 

@@ -6,17 +6,6 @@ export const ApprovalDetailStatusResponseSchema = z.object({
   name: z.string(),
 });
 
-export const ApprovalDetailEventResponseSchema = z.object({
-  id: z.number(),
-  subject_type: z.string(),
-  subject_id: z.number(),
-  performed_by: z.number().nullable(),
-  status_id: z.number(),
-  action: z.string(),
-  comment: z.string().nullable(),
-  event_at: z.string(),
-});
-
 export const ApprovalDetailUserRoleResponseSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -26,6 +15,24 @@ export const ApprovalDetailUserResponseSchema = z.object({
   id: z.number(),
   name: z.string(),
   roles: z.array(ApprovalDetailUserRoleResponseSchema),
+});
+
+export const ApprovalDetailEventPerformerResponseSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  roles: z.array(ApprovalDetailUserRoleResponseSchema),
+});
+
+export const ApprovalDetailEventResponseSchema = z.object({
+  id: z.number(),
+  subject_type: z.string(),
+  subject_id: z.number(),
+  performed_by: z.number().nullable(),
+  status_id: z.number(),
+  action: z.string(),
+  comment: z.string().nullable(),
+  event_at: z.string(),
+  performer: ApprovalDetailEventPerformerResponseSchema.nullable(),
 });
 
 export const ApprovalDetailResponseSchema = z.object({

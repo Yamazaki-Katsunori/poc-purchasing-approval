@@ -19,8 +19,4 @@ class ApprovalDetailService:
         if approval is None:
             raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="対象の申請データが見つかりませんでした。")
 
-        print(f"approval.id: {approval.id}")
-        print(f"approval.current_status: {vars(approval.current_status)}")
-        print(f"approval.current_event: {vars(approval.current_event)}")
-
         return ApprovalDetailResponse.model_validate(approval)

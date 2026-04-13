@@ -4,6 +4,7 @@ from wireup import injectable
 
 from src.features.purchasing_approvals.detail.interfaces import IApprovalDetailRepository
 from src.models.purchasing_approval import PurchasingApproval
+from src.models.purchasing_approval_event import PurchasingApprovalEvent
 from src.models.user import User
 
 
@@ -22,7 +23,9 @@ class ApprovalDetailRepository(IApprovalDetailRepository):
             .options(
                 joinedload(PurchasingApproval.user).selectinload(User.roles),
                 joinedload(PurchasingApproval.current_status),
-                joinedload(PurchasingApproval.current_event),
+                joinedload(PurchasingApproval.current_event).options(
+                    joinedload(PurchasingApprovalEvent.performer).selectinload(User.roles)
+                ),
             )
         )
 
