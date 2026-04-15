@@ -9,6 +9,8 @@ import { formatJapaneseDateTime } from '@/shared/formatter/format-datetime';
 import { ApprovalDetailMetaInfo } from './componetns/approvalDetailMetaInfo';
 import { getApprovalStatusBadgeVariant } from './shard/get-approval-status-badge-meta';
 import { useBackHome } from './hooks/use-back-home';
+import { useApprove } from './hooks/approve/use-approve';
+import { useReject } from './hooks/rejected/use-reject';
 
 type ApprovalDetailProps = {
   id: string;
@@ -17,6 +19,8 @@ type ApprovalDetailProps = {
 export function ApprovalDetail({ id }: ApprovalDetailProps) {
   const { data, isPending, isError, error } = useGetApprovalDetail(id);
   const { onBackHome } = useBackHome();
+  const { onApprove, isApproveError, isApprovePending } = useApprove();
+  const { onReject, isRejectPending, isRejectError } = useReject();
 
   if (isPending) return <PageLoading message="取得中..." />;
   if (isError) return <div>{error.message}</div>;
@@ -89,22 +93,15 @@ export function ApprovalDetail({ id }: ApprovalDetailProps) {
               type="button"
               variant="danger"
               onClick={() => {
-                console.log('差し戻しボタン(仮)');
+                onReject(data.id);
               }}
-              disabled={false}
+              disabled={isRejectPending}
             >
-              承認ボタン(仮)
+              差し戻し(仮)
             </Button>
 
-            <Button
-              type="button"
-              variant="primary"
-              onClick={() => {
-                console.log('承認ボタン(仮)');
-              }}
-              disabled={false}
-            >
-              承認ボタン(仮)
+            <Button type="button" variant="primary" onClick={() => onApprove(data.id)} disabled={isApprovePending}>
+              承認(仮)
             </Button>
           </div>
         </CardFooter>
