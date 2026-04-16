@@ -5,7 +5,7 @@ export type ApproveResponse = {
 };
 
 export const approveApi = (id: number): Promise<ApproveResponse> => {
-  return apiClient<ApproveResponse>('/approve', {
+  return apiClient<ApproveResponse>(`/approvals/${id}/approve`, {
     method: 'POST',
     body: id,
     credentials: 'include',

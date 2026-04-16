@@ -9,7 +9,11 @@ from src.features.purchasing_approvals.confirm.repository import (
     PurchasingApprovalStatusRepository,
 )
 from src.features.purchasing_approvals.confirm.service import CreateApprovalService
-from src.features.purchasing_approvals.detail.repository import ApprovalDetailRepository
+from src.features.purchasing_approvals.detail.repository import (
+    ApprovalDetailEventRepository,
+    ApprovalDetailRepository,
+    ApprovalDetailStatusRepository,
+)
 from src.features.purchasing_approvals.detail.service import ApprovalDetailService
 from src.features.purchasing_approvals.list.repository import ApprovalListRepository
 from src.features.purchasing_approvals.list.service import PurchasingApprovalListService
@@ -26,6 +30,8 @@ container = wireup.create_async_container(
         ApprovalListRepository,
         PurchasingApprovalListService,
         ApprovalDetailRepository,
+        ApprovalDetailEventRepository,
+        ApprovalDetailStatusRepository,
         ApprovalDetailService,
     ]
 )
