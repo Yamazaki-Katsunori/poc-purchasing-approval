@@ -10,7 +10,7 @@ import { ApprovalDetailMetaInfo } from './componetns/approvalDetailMetaInfo';
 import { getApprovalStatusBadgeVariant } from './shard/get-approval-status-badge-meta';
 import { useBackHome } from './hooks/use-back-home';
 import { useApprove } from './hooks/approve/use-approve';
-import { useReject } from './hooks/rejected/use-reject';
+import { useReject } from './hooks/returned/use-returned';
 
 type ApprovalDetailProps = {
   id: string;

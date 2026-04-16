@@ -91,7 +91,12 @@ class ApproveResponse(BaseModel):
 class ApprovalReturnResponse(BaseModel):
     """申請確認画面の差し戻し処理のレスポンスモデル"""
 
-    message: str
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    current_status_id: int
+    current_event_id: int | None
+    approved_at: datetime | None
 
 
 class ApprovalReSubmitResponse(BaseModel):

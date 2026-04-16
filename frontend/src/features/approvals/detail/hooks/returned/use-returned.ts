@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { useRejectMutation } from './use-reject-mutation';
+import { useRejectMutation } from './use-returned-mutation';
 import { useQueryClient } from '@tanstack/react-query';
 
 export const useReject = () => {

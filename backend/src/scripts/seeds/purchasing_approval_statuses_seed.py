@@ -12,7 +12,7 @@ def seed_purchasing_approval_statuses() -> None:
         },
         {"code": "submitted", "name": "申請中"},
         {"code": "approved", "name": "承認済み"},
-        {"code": "rejected", "name": "却下"},
+        {"code": "returned", "name": "差し戻し"},
     ]
 
     with SessionLocal() as session:

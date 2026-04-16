@@ -100,9 +100,9 @@ def approval_return(
     user_id = int(sub)
 
     # NOTE: 差し戻し処理の作成
-    # subject_approval = service
+    subject_approval = service.return_approval(approval_id=approval_id, user_id=user_id)
 
-    return ApprovalReturnResponse(message="仮定義")
+    return ApprovalReturnResponse.model_validate(subject_approval)
 
 
 @router.post("/{approval_id}/resubmit", response_model=ApprovalReSubmitResponse)

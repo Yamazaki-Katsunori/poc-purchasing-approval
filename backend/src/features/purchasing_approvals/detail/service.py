@@ -47,6 +47,9 @@ class ApprovalDetailService:
     def approve(self, approval_id: int, user_id: int) -> PurchasingApproval:
         """申請詳細画面で承認ボタンを押下した際に承認ステータスに更新する処理"""
 
+        # NOTE: このタイミングで承認操作可能ユーザーかチェック
+        # is_approve_action_user = auth_action_user_exsits()
+
         with self.db.begin():
             approval = self.approval_repository.find_by_id(approval_id)
 
@@ -72,6 +75,50 @@ class ApprovalDetailService:
                 performed_by=user_id,
                 status_id=approve_status.id,
                 action=ApprovalActionState.APPROVE.value,
+                comment=None,
+                event_at=now,
+            )
+            created_event = self.approval_event_repository.create(event)
+
+            updated_approval = self.approval_repository.update_current_event_id(
+                approval=saved_approval,
+                approval_event_id=created_event.id,
+            )
+
+        self.db.refresh(updated_approval)
+        return updated_approval
+
+    def return_approval(self, approval_id: int, user_id: int) -> PurchasingApproval:
+        """申請確認画面で差し戻しボタンを押下した際に申請ステータスを差し戻しに更新する"""
+
+        # NOTE: このタイミングで差し戻し操作可能ユーザーかチェック
+        # is_returned_action_user = auth_action_user_exsits()
+
+        with self.db.begin():
+            approval = self.approval_repository.find_by_id(approval_id)
+
+            if approval is None:
+                raise HTTPException(
+                    status_code=HTTP_404_NOT_FOUND,
+                    detail="対象の申請データが見つかりませんでした。",
+                )
+
+            approve_status = self.approval_status_repository.find_by_code(ApprovalStatusCode.RETURNED.value)
+
+            if approve_status is None:
+                raise ValueError(f"{ApprovalStatusCode.RETURNED.value.upper()} status not found")
+
+            now = datetime.now(UTC)
+            approval.current_status_id = approve_status.id
+            approval.approved_at = now
+            saved_approval = self.approval_repository.save(approval)
+
+            event = PurchasingApprovalEvent(
+                subject_type="approval",
+                subject_id=saved_approval.id,
+                performed_by=user_id,
+                status_id=approve_status.id,
+                action=ApprovalActionState.REMAND.value,
                 comment=None,
                 event_at=now,
             )

@@ -1,7 +1,7 @@
 import { apiClient } from '@/shared/api/client';
 
-export const rejectApi = (id: number) => {
-  return apiClient('/reject', {
+export const returnedApi = (id: number) => {
+  return apiClient(`/approvals/${id}/return`, {
     method: 'POST',
     body: id,
     credentials: 'include',

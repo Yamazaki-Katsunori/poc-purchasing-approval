@@ -11,7 +11,7 @@ export const getApprovalStatusBadgeVariant = (statusCode: string | undefined): B
       return 'warning';
     case 'approved':
       return 'success';
-    case 'rejected':
+    case 'returned':
       return 'danger';
     case 'draft':
       return 'outline';
