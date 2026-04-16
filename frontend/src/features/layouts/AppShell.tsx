@@ -4,7 +4,7 @@ import { Header } from '@/ui/header';
 import { Sidebar } from '@/ui/sidebar';
 import { useLogout } from './hooks/logout-hook';
 import { useSidebar } from './hooks/useSidebar';
-import { useCurrentUser } from './hooks/useCurrentUser';
+import { useCurrentUser } from '@/shared/hooks/auth/useCurrentUser';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const { isOpen, toggle, close } = useSidebar();

@@ -3,7 +3,7 @@
 import { logoutApi } from '@/features/api/logout';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { CURRENT_USER_QUERY_KEY } from './useCurrentUser';
+import { CURRENT_USER_QUERY_KEY } from '@/shared/hooks/auth/useCurrentUser';
 
 export const useLogout = () => {
   const router = useRouter();

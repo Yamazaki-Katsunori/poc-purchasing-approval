@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useLoginMutation } from './login-mutation';
 import { useQueryClient } from '@tanstack/react-query';
-import { CURRENT_USER_QUERY_KEY } from '@/features/layouts/hooks/useCurrentUser';
+import { CURRENT_USER_QUERY_KEY } from '@/shared/hooks/auth/useCurrentUser';
 
 export const useLoginForm = () => {
   const form = useForm<LoginValueTypes>({
