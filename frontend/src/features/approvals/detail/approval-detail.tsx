@@ -20,8 +20,8 @@ type ApprovalDetailProps = {
 export function ApprovalDetail({ id }: ApprovalDetailProps) {
   const { data, isPending, isError, error } = useGetApprovalDetail(id);
   const { onBackHome } = useBackHome();
-  const { onApprove, isApproveError, isApprovePending } = useApprove();
-  const { onReject, isRejectPending, isRejectError } = useReject();
+  const { onApprove, isApprovePending } = useApprove();
+  const { onReject, isRejectPending } = useReject();
   const { isApplicant, isApprover } = useAuthz();
 
   if (isPending) return <PageLoading message="取得中..." />;
