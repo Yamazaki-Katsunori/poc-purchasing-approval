@@ -11,6 +11,7 @@ import { getApprovalStatusBadgeVariant } from './shard/get-approval-status-badge
 import { useBackHome } from './hooks/use-back-home';
 import { useApprove } from './hooks/approve/use-approve';
 import { useReject } from './hooks/returned/use-returned';
+import { useAuthz } from './hooks/use-authz';
 
 type ApprovalDetailProps = {
   id: string;
@@ -21,6 +22,7 @@ export function ApprovalDetail({ id }: ApprovalDetailProps) {
   const { onBackHome } = useBackHome();
   const { onApprove, isApproveError, isApprovePending } = useApprove();
   const { onReject, isRejectPending, isRejectError } = useReject();
+  const { isApplicant, isApprover } = useAuthz();
 
   if (isPending) return <PageLoading message="取得中..." />;
   if (isError) return <div>{error.message}</div>;
@@ -88,22 +90,24 @@ export function ApprovalDetail({ id }: ApprovalDetailProps) {
             </Button>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="danger"
-              onClick={() => {
-                onReject(data.id);
-              }}
-              disabled={isRejectPending}
-            >
-              差し戻し(仮)
-            </Button>
+          {isApprover ? (
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="danger"
+                onClick={() => {
+                  onReject(data.id);
+                }}
+                disabled={isRejectPending}
+              >
+                差し戻し(仮)
+              </Button>
 
-            <Button type="button" variant="primary" onClick={() => onApprove(data.id)} disabled={isApprovePending}>
-              承認(仮)
-            </Button>
-          </div>
+              <Button type="button" variant="primary" onClick={() => onApprove(data.id)} disabled={isApprovePending}>
+                承認(仮)
+              </Button>
+            </div>
+          ) : null}
         </CardFooter>
       </Card>
     </>
